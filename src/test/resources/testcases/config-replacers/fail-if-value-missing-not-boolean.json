@@ -1,0 +1,7 @@
+{
+  "hazelcast": {
+    "config-replacers": {
+      "fail-if-value-missing": 42
+    }
+  }
+}

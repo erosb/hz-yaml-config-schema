@@ -1,0 +1,7 @@
+{
+  "schemaLocation": "#/definitions/ConfigReplacers/properties/fail-if-value-missing",
+  "pointerToViolation": "#/hazelcast/config-replacers/fail-if-value-missing",
+  "causingExceptions": [],
+  "keyword": "type",
+  "message": "expected type: Boolean, found: Integer"
+}

@@ -1,0 +1,1362 @@
+{
+  "hazelcast": {
+    "import": [
+      "your-configuration-YAML-file"
+    ],
+    "config-replacers": {
+      "fail-if-value-missing": false,
+      "replacers": [
+        {
+          "class-name": "com.hazelcast.config.replacer.EncryptionReplacer",
+          "properties": {
+            "passwordFile": "password.txt",
+            "passwordUserProperties": false,
+            "cipherAlgorithm": "DES",
+            "keyLengthBits": 64,
+            "secretKeyAlgorithm": "DES",
+            "secretKeyFactoryAlgorithm": "PBKDF2WithHmacSHA1"
+          }
+        }
+      ]
+    },
+    "cluster-name": "my-cluster",
+    "license-key": "Your Hazelcast Enterprise or Enterprise HD License Key",
+    "instance-name": "hzInstance1",
+    "management-center": {
+      "scripting-enabled": false
+    },
+    "properties": {
+      "your-property": "Value of the property"
+    },
+    "wan-replication": {
+      "my-wan-cluster-batch": {
+        "batch-publisher": {
+          "nycPublisherId": {
+            "cluster-name": "nyc",
+            "batch-size": 1000,
+            "batch-max-delay-millis": 2000,
+            "response-timeout-millis": 60000,
+            "acknowledge-type": "ACK_ON_OPERATION_COMPLETE",
+            "initial-publisher-state": "REPLICATING",
+            "snapshot-enabled": false,
+            "idle-max-park-ns": 250000000,
+            "idle-min-park-ns": 10000000,
+            "max-concurrent-invocations": -1,
+            "discovery-period-seconds": 10,
+            "use-endpoint-private-address": false,
+            "queue-full-behavior": "DISCARD_AFTER_MUTATION",
+            "max-target-endpoints": 2147483647,
+            "queue-capacity": 10000,
+            "target-endpoints": "10.3.5.1:5701,10.3.5.2:5701",
+            "sync": {
+              "consistency-check-strategy": "NONE"
+            }
+          }
+        },
+        "custom-publisher": {
+          "customPublisherId": {
+            "class-name": "com.companyName.CustomWanPublisher",
+            "properties": {
+              "prop1": "prop1-value",
+              "prop2": "prop2-value"
+            }
+          }
+        },
+        "consumer": {
+          "persist-wan-replicated-data": true
+        }
+      }
+    },
+    "network": {
+      "public-address": "11.22.33.44:5555",
+      "port": {
+        "auto-increment": true,
+        "port-count": 100,
+        "port": 5701
+      },
+      "outbound-ports": [
+        34500
+      ],
+      "reuse-address": false,
+      "join": {
+        "multicast": {
+          "enabled": false,
+          "multicast-group": "224.2.2.3",
+          "multicast-port": 54327
+        },
+        "tcp-ip": {
+          "enabled": false,
+          "interface": "127.0.0.1",
+          "required-member": "10.0.0.1",
+          "member-list": [
+            "10.0.0.2",
+            "10.0.0.3"
+          ]
+        },
+        "aws": {
+          "enabled": false,
+          "access-key": "my-access-key",
+          "secret-key": "my-secret-key",
+          "iam-role": "dummy",
+          "region": "us-west-1",
+          "host-header": "ec2.amazonaws.com",
+          "security-group-name": "hazelcast-sg",
+          "tag-key": "type",
+          "tag-value": "hz-nodes"
+        },
+        "gcp": {
+          "enabled": false,
+          "zones": "us-east1-b,us-east1-c"
+        },
+        "azure": {
+          "enabled": false,
+          "client-id": "CLIENT_ID",
+          "client-secret": "CLIENT_SECRET",
+          "tenant-id": "TENANT_ID",
+          "subscription-id": "SUB_ID",
+          "cluster-id": "HZLCAST001",
+          "group-name": "RESOURCE-GROUP-NAME"
+        },
+        "kubernetes": {
+          "enabled": false,
+          "namespace": "MY-KUBERNETES-NAMESPACE",
+          "service-name": "MY-SERVICE-NAME",
+          "service-label-name": "MY-SERVICE-LABEL-NAME",
+          "service-label-value": "MY-SERVICE-LABEL-VALUE"
+        },
+        "eureka": {
+          "enabled": false,
+          "self-registration": true,
+          "namespace": "hazelcast"
+        },
+        "discovery-strategies": {
+          "node-filter": {
+            "class": "com.yourpackage.NodeFilter"
+          },
+          "discovery-strategies": [
+            {
+              "enabled": true,
+              "class": "com.hazelcast.jclouds.JCloudsDiscoveryStrategy",
+              "properties": {
+                "provider": "google-compute-engine",
+                "identity": "GCE_IDENTITY",
+                "credential": "GCE_CREDENTIAL"
+              }
+            }
+          ]
+        }
+      },
+      "interfaces": {
+        "enabled": true,
+        "interfaces": [
+          "10.10.1.*"
+        ]
+      },
+      "ssl": {
+        "enabled": false,
+        "factory-class-name": "com.hazelcast.nio.ssl.BasicSSLContextFactory",
+        "properties": {
+          "protocol": "TLS",
+          "mutualAuthentication": "REQUIRED",
+          "keyStore": "/opt/hazelcast.keystore",
+          "keyStorePassword": "secret.97531",
+          "keyStoreType": "JKS",
+          "trustStore": "/opt/hazelcast.truststore",
+          "trustStorePassword": "changeit",
+          "trustStoreType": "JKS"
+        }
+      },
+      "socket-interceptor": {
+        "enabled": false
+      },
+      "symmetric-encryption": {
+        "enabled": false,
+        "algorithm": "PBEWithMD5AndDES",
+        "password": "...",
+        "salt": "...",
+        "iteration-count": 7
+      },
+      "member-address-provider": {
+        "enabled": false,
+        "class-name": "com.hazelcast.MemberAddressProviderImpl",
+        "properties": {
+          "prop1": "prop1-value",
+          "prop2": "prop2-value"
+        }
+      },
+      "failure-detector": {
+        "icmp": {
+          "enabled": true,
+          "timeout-milliseconds": 1000,
+          "fail-fast-on-startup": true,
+          "interval-milliseconds": 1000,
+          "max-attempts": 2,
+          "parallel-mode": true,
+          "ttl": 255
+        }
+      },
+      "rest-api": {
+        "enabled": false,
+        "endpoint-groups": {
+          "CLUSTER_READ": {
+            "enabled": true
+          },
+          "CLUSTER_WRITE": {
+            "enabled": false
+          },
+          "HEALTH_CHECK": {
+            "enabled": false
+          },
+          "HOT_RESTART": {
+            "enabled": false
+          },
+          "WAN": {
+            "enabled": false
+          },
+          "DATA": {
+            "enabled": false
+          }
+        }
+      },
+      "memcache-protocol": {
+        "enabled": false
+      }
+    },
+    "partition-group": {
+      "enabled": true,
+      "group-type": "CUSTOM",
+      "member-group": [
+        [
+          "10.10.0.*",
+          "10.10.3.*",
+          "10.10.5.*"
+        ],
+        [
+          "10.10.10.10-100",
+          "10.10.1.*",
+          "10.10.2.*"
+        ]
+      ]
+    },
+    "executor-service": {
+      "default": {
+        "statistics-enabled": true,
+        "pool-size": 16,
+        "queue-capacity": 0,
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes"
+      }
+    },
+    "durable-executor-service": {
+      "default": {
+        "pool-size": 16,
+        "durability": 1,
+        "capacity": 100,
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes"
+      }
+    },
+    "scheduled-executor-service": {
+      "default": {
+        "pool-size": 16,
+        "durability": 1,
+        "capacity": 100,
+        "capacity-policy": "PER_NODE",
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes",
+        "merge-policy": {
+          "batch-size": 100,
+          "class-name": "PutIfAbsentMergePolicy"
+        }
+      }
+    },
+    "cardinality-estimator": {
+      "default": {
+        "backup-count": 1,
+        "async-backup-count": 0,
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes",
+        "merge-policy": {
+          "batch-size": 102,
+          "class-name": "PutIfAbsentMergePolicy"
+        }
+      }
+    },
+    "queue": {
+      "default": {
+        "statistics-enabled": true,
+        "max-size": 0,
+        "backup-count": 1,
+        "async-backup-count": 0,
+        "empty-queue-ttl": -1,
+        "item-listeners": [
+          {
+            "include-value": true,
+            "class-name": "com.hazelcast.examples.ItemListener"
+          }
+        ],
+        "queue-store": {
+          "class-name": "com.hazelcast.QueueStoreImpl",
+          "properties": {
+            "binary": false,
+            "memory-limit": 1000,
+            "bulk-load": 500
+          }
+        },
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes",
+        "merge-policy": {
+          "batch-size": 100,
+          "class-name": "PutIfAbsentMergePolicy"
+        }
+      }
+    },
+    "map": {
+      "default": {
+        "in-memory-format": "BINARY",
+        "metadata-policy": "CREATE_ON_UPDATE",
+        "statistics-enabled": true,
+        "cache-deserialized-values": "ALWAYS",
+        "backup-count": 1,
+        "async-backup-count": 0,
+        "time-to-live-seconds": 0,
+        "max-idle-seconds": 0,
+        "eviction": {
+          "eviction-policy": "NONE",
+          "max-size-policy": "PER_NODE",
+          "size": 0
+        },
+        "merge-policy": {
+          "batch-size": 100,
+          "class-name": "PutIfAbsentMergePolicy"
+        },
+        "read-backup-data": false,
+        "hot-restart": {
+          "enabled": false,
+          "fsync": false
+        },
+        "event-journal": {
+          "enabled": false,
+          "capacity": 10000,
+          "time-to-live-seconds": 0
+        },
+        "merkle-tree": {
+          "enabled": false,
+          "depth": 10
+        },
+        "map-store": {
+          "enabled": true,
+          "initial-mode": "LAZY",
+          "class-name": "com.hazelcast.examples.DummyStore",
+          "write-delay-seconds": 60,
+          "write-batch-size": 1000,
+          "write-coalescing": true,
+          "properties": {
+            "jdbc_url": "my.jdbc.com"
+          }
+        },
+        "near-cache": {
+          "time-to-live-seconds": 0,
+          "max-idle-seconds": 60,
+          "invalidate-on-change": true,
+          "in-memory-format": "BINARY",
+          "cache-local-entries": false,
+          "eviction": {
+            "size": 1000,
+            "max-size-policy": "ENTRY_COUNT",
+            "eviction-policy": "LFU"
+          }
+        },
+        "wan-replication-ref": {
+          "my-wan-cluster-batch": {
+            "merge-policy-class-name": "PassThroughMergePolicy",
+            "filters": [
+              "com.example.SampleFilter",
+              "com.example.SampleFilter2"
+            ],
+            "republishing-enabled": false
+          }
+        },
+        "indexes": [
+          {
+            "type": "HASH",
+            "attributes": [
+              "name"
+            ]
+          },
+          {
+            "attributes": [
+              "age"
+            ]
+          },
+          {
+            "type": "HASH",
+            "attributes": [
+              "name",
+              "age"
+            ]
+          },
+          {
+            "attributes": [
+              "age",
+              "name"
+            ]
+          },
+          {
+            "type": "BITMAP",
+            "attributes": [
+              "age"
+            ]
+          },
+          {
+            "type": "BITMAP",
+            "attributes": [
+              "name"
+            ],
+            "bitmap-index-options": {
+              "unique-key": "id",
+              "unique-key-transformation": "RAW"
+            }
+          }
+        ],
+        "attributes": {
+          "currency": {
+            "extractor-class-name": "com.bank.CurrencyExtractor"
+          }
+        },
+        "entry-listeners": [
+          {
+            "class-name": "com.your-package.MyEntryListener",
+            "include-value": false,
+            "local": false
+          }
+        ],
+        "partition-lost-listeners": [
+          "com.your-package.YourPartitionLostListener"
+        ],
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes",
+        "query-caches": {
+          "myContQueryCache": {
+            "include-value": true,
+            "predicate": {
+              "class-name": "com.hazelcast.examples.ExamplePredicate"
+            },
+            "entry-listeners": [
+              {
+                "class-name": "..."
+              }
+            ],
+            "in-memory-format": "BINARY",
+            "populate": true,
+            "coalesce": false,
+            "delay-seconds": 3,
+            "batch-size": 2,
+            "buffer-size": 32,
+            "eviction": {
+              "size": 1000,
+              "max-size-policy": "ENTRY_COUNT",
+              "eviction-policy": "LFU"
+            },
+            "indexes": [
+              {
+                "attributes": [
+                  "name"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "multimap": {
+      "default": {
+        "backup-count": 1,
+        "async-backup-count": 0,
+        "binary": true,
+        "value-collection-type": "SET",
+        "entry-listeners": [
+          {
+            "class-name": "com.hazelcast.examples.EntryListener",
+            "include-value": true,
+            "local": true
+          }
+        ],
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes",
+        "merge-policy": {
+          "batch-size": 100,
+          "class-name": "PutIfAbsentMergePolicy"
+        }
+      }
+    },
+    "replicatedmap": {
+      "replicatedMap1": {
+        "in-memory-format": "BINARY",
+        "async-fillup": true,
+        "statistics-enabled": true,
+        "entry-listeners": [
+          {
+            "class-name": "com.hazelcast.examples.EntryListener",
+            "include-value": true,
+            "local": true
+          }
+        ],
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes",
+        "merge-policy": {
+          "batch-size": 100,
+          "class-name": "LatestAccessMergePolicy"
+        }
+      }
+    },
+    "cache": {
+      "default": {
+        "key-type": {
+          "class-name": "java.lang.Object"
+        },
+        "value-type": {
+          "class-name": "java.lang.Object"
+        },
+        "statistics-enabled": false,
+        "management-enabled": false,
+        "read-through": true,
+        "write-through": true,
+        "cache-loader-factory": {
+          "class-name": "com.example.cache.MyCacheLoaderFactory"
+        },
+        "cache-writer-factory": {
+          "class-name": "com.example.cache.MyCacheWriterFactory"
+        },
+        "expiry-policy-factory": {
+          "class-name": "com.example.cache.MyExpirePolicyFactory"
+        },
+        "cache-entry-listeners": {
+          "cache-entry-listener": {
+            "old-value-required": false,
+            "synchronous": false,
+            "cache-entry-listener-factory": {
+              "class-name": "com.example.cache.MyEntryListenerFactory"
+            },
+            "cache-entry-event-filter-factory": {
+              "class-name": "com.example.cache.MyEntryEventFilterFactory"
+            }
+          }
+        },
+        "in-memory-format": "BINARY",
+        "backup-count": 1,
+        "async-backup-count": 0,
+        "eviction": {
+          "size": 1000,
+          "max-size-policy": "ENTRY_COUNT",
+          "eviction-policy": "LFU"
+        },
+        "wan-replication-ref": {
+          "name": "my-wan-cluster-batch",
+          "merge-policy-class-name": "PassThroughMergePolicy",
+          "republishing-enabled": true,
+          "filters": [
+            "com.example.SampleFilter"
+          ]
+        },
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes",
+        "partition-lost-listeners": [
+          "com.your-package.YourPartitionLostListener"
+        ],
+        "merge-policy": {
+          "batch-size": 100,
+          "class-name": "LatestAccessMergePolicy"
+        },
+        "hot-restart": {
+          "enabled": false,
+          "fsync": false
+        },
+        "event-journal": {
+          "enabled": false,
+          "capacity": 10000,
+          "time-to-live-seconds": 0
+        },
+        "disable-per-entry-invalidation-events": true
+      }
+    },
+    "list": {
+      "default": {
+        "statistics-enabled": false,
+        "max-size": 0,
+        "backup-count": 1,
+        "async-backup-count": 0,
+        "item-listeners": [
+          {
+            "class-name": "com.hazelcast.examples.ItemListener",
+            "include-value": true
+          }
+        ],
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes",
+        "merge-policy": {
+          "batch-size": 100,
+          "class-name": "PutIfAbsentMergePolicy"
+        }
+      }
+    },
+    "set": {
+      "default": {
+        "backup-count": 1,
+        "async-backup-count": 0,
+        "max-size": 10,
+        "item-listeners": [
+          {
+            "class-name": "com.hazelcast.examples.ItemListener",
+            "include-value": true
+          }
+        ],
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes",
+        "merge-policy": {
+          "batch-size": 100,
+          "class-name": "PutIfAbsentMergePolicy"
+        }
+      }
+    },
+    "topic": {
+      "default": {
+        "global-ordering-enabled": true,
+        "statistics-enabled": true,
+        "message-listeners": [
+          "com.hazelcast.examples.MessageListener"
+        ]
+      }
+    },
+    "reliable-topic": {
+      "default": {
+        "statistics-enabled": true,
+        "topic-overload-policy": "ERROR",
+        "read-batch-size": 10,
+        "message-listeners": [
+          "com.hazelcast.examples.MessageListener"
+        ]
+      }
+    },
+    "ringbuffer": {
+      "default": {
+        "capacity": 10000,
+        "time-to-live-seconds": 0,
+        "backup-count": 1,
+        "async-backup-count": 0,
+        "in-memory-format": "BINARY",
+        "ringbuffer-store": {
+          "class-name": "com.hazelcast.RingbufferStoreImpl",
+          "properties": {
+            "prop1": "prop1-value",
+            "prop2": "prop2-value"
+          }
+        },
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes",
+        "merge-policy": {
+          "class-name": "PutIfAbsentMergePolicy"
+        }
+      }
+    },
+    "flake-id-generator": {
+      "default": {
+        "prefetch-count": 100,
+        "prefetch-validity-millis": 600000,
+        "epoch-start": 1514764800000,
+        "node-id-offset": 0,
+        "bits-sequence": 6,
+        "bits-node-id": 16,
+        "allowed-future-millis": 15000,
+        "statistics-enabled": true
+      }
+    },
+    "listeners": [
+      "your-package.YourMembershipListener",
+      "your-package.YourDistributedObjectListener",
+      "your-package.YourMigrationListener",
+      "your-package.YourPartitionLostListener"
+    ],
+    "serialization": {
+      "portable-version": 0,
+      "use-native-byte-order": false,
+      "byte-order": "BIG_ENDIAN",
+      "data-serializable-factories": [
+        {
+          "factory-id": 1,
+          "class-name": "com.hazelcast.examples.DataSerializableFactory"
+        }
+      ],
+      "portable-factories": [
+        {
+          "factory-id": 1,
+          "class-name": "com.hazelcast.examples.PortableFactory"
+        }
+      ],
+      "global-serializer": {
+        "class-name": "com.hazelcast.examples.GlobalSerializerFactory"
+      },
+      "serializers": [
+        {
+          "type-class": "com.hazelcast.examples.DummyType",
+          "class-name": "com.hazelcast.examples.SerializerFactory"
+        }
+      ],
+      "check-class-def-errors": true,
+      "java-serialization-filter": {
+        "defaults-disabled": true,
+        "blacklist": {
+          "class": [
+            "com.acme.app.BeanComparator"
+          ]
+        },
+        "whitelist": {
+          "class": [
+            "java.lang.String",
+            "example.Foo"
+          ],
+          "package": [
+            "com.acme.app",
+            "com.acme.app.subpkg"
+          ],
+          "prefix": [
+            "com.hazelcast.",
+            "java"
+          ]
+        }
+      }
+    },
+    "native-memory": {
+      "enabled": true,
+      "allocator-type": "POOLED",
+      "size": {
+        "unit": "MEGABYTES",
+        "value": 256
+      },
+      "min-block-size": 32,
+      "page-size": 4194304,
+      "metadata-space-percentage": 12.5,
+      "persistent-memory-directory": "/mnt/optane"
+    },
+    "security": {
+      "enabled": false,
+      "realms": [
+        {
+          "name": "mr",
+          "authentication": {
+            "jaas": [
+              {
+                "class-name": "com.hazelcast.examples.MyRequiredLoginModule",
+                "usage": "REQUIRED",
+                "properties": {
+                  "property": "value"
+                }
+              }
+            ]
+          },
+          "identity": {
+            "credentials-factory": {
+              "class-name": "com.hazelcast.examples.MyCredentialsFactory",
+              "properties": {
+                "property": "value"
+              }
+            }
+          }
+        },
+        {
+          "name": "cr",
+          "authentication": {
+            "jaas": [
+              {
+                "class-name": "com.hazelcast.examples.MyOptionalLoginModule",
+                "usage": "OPTIONAL",
+                "properties": {
+                  "property": "value"
+                }
+              },
+              {
+                "class-name": "com.hazelcast.examples.MyRequiredLoginModule",
+                "usage": "REQUIRED",
+                "properties": {
+                  "property": "value"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "ldapRealm",
+          "authentication": {
+            "ldap": {
+              "url": "ldap://ldap.my-company.example",
+              "socket-factory-class-name": "socketFactoryClassName",
+              "parse-dn": true,
+              "role-context": "roleContext",
+              "role-filter": "roleFilter",
+              "role-mapping-attribute": "roleMappingAttribute",
+              "role-mapping-mode": "reverse",
+              "role-name-attribute": "roleNameAttribute",
+              "role-recursion-max-depth": 25,
+              "role-search-scope": "object",
+              "user-name-attribute": "userNameAttribute",
+              "system-user-dn": "systemUserDn",
+              "system-user-password": "systemUserPassword",
+              "password-attribute": "passwordAttribute",
+              "user-context": "userContext",
+              "user-filter": "userFilter",
+              "user-search-scope": "one-level"
+            }
+          }
+        },
+        {
+          "name": "tlsRealm",
+          "authentication": {
+            "tls": {
+              "roleAttribute": "cn"
+            }
+          }
+        },
+        {
+          "name": "usernamePasswordIdentityRealm",
+          "identity": {
+            "username-password": {
+              "username": "user",
+              "password": "Hazelcast"
+            }
+          }
+        },
+        {
+          "name": "tokenIdentityRealm",
+          "identity": {
+            "token": {
+              "encoding": "base64",
+              "value": "SGF6ZWxjYXN0"
+            }
+          }
+        }
+      ],
+      "member-authentication": {
+        "realm": "mr"
+      },
+      "client-authentication": {
+        "realm": "cr"
+      },
+      "client-permission-policy": {
+        "class-name": "com.hazelcast.examples.MyPermissionPolicy",
+        "properties": {
+          "property": "value"
+        }
+      },
+      "client-permissions": {
+        "on-join-operation": "RECEIVE",
+        "all": {
+          "principal": "admin",
+          "endpoints": [
+            "127.0.0.1"
+          ]
+        },
+        "config": {
+          "endpoints": [
+            "127.0.0.1"
+          ]
+        },
+        "transaction": {
+          "endpoints": [
+            "127.0.0.1"
+          ]
+        },
+        "map": [
+          {
+            "name": "custom",
+            "principal": "dev",
+            "endpoints": [
+              "127.0.0.1"
+            ],
+            "actions": [
+              "create",
+              "destroy",
+              "put",
+              "read"
+            ]
+          }
+        ],
+        "queue": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "topic": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "multimap": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "list": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "set": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "flake-id-generator": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "lock": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "atomic-long": [
+          {
+            "name": "*",
+            "actions": {
+              "action": "all"
+            }
+          }
+        ],
+        "countdown-latch": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "semaphore": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "executor-service": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "durable-executor-service": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "cardinality-estimator": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "scheduled-executor": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "cache": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "user-code-deployment": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ],
+        "pn-counter": [
+          {
+            "name": "*",
+            "actions": [
+              "all"
+            ]
+          }
+        ]
+      },
+      "client-block-unmapped-actions": true,
+      "security-interceptors": [
+        "com.your-package.YourSecurityInterceptorImplementation"
+      ]
+    },
+    "member-attributes": {
+      "CPU_CORE_COUNT": {
+        "type": "int",
+        "value": 4
+      },
+      "CPU_CORE_FREQ": {
+        "type": "int",
+        "value": 1033
+      }
+    },
+    "split-brain-protection": {
+      "splitBrainProtectionRuleWithThreeMembers": {
+        "enabled": true,
+        "minimum-cluster-size": 3,
+        "protect-on": "READ_WRITE",
+        "function-class-name": "com.your-package.AbsPresMySplitBrainProtection",
+        "listeners": [
+          "com.your-package.ThreeMemberSplitBrainProtectionListener"
+        ]
+      }
+    },
+    "lite-member": {
+      "enabled": true
+    },
+    "hot-restart-persistence": {
+      "enabled": true,
+      "base-dir": "/mnt/hot-restart",
+      "backup-dir": "/mnt/hot-backup",
+      "validation-timeout-seconds": 120,
+      "data-load-timeout-seconds": 900,
+      "cluster-data-recovery-policy": "PARTIAL_RECOVERY_MOST_COMPLETE",
+      "encryption-at-rest": {
+        "enabled": true,
+        "algorithm": "AES/CBC/PKCS5Padding",
+        "salt": "somesalt",
+        "key-size": 16,
+        "secure-store": {
+          "keystore": {
+            "path": "/path/to/keystore.file",
+            "type": "PKCS12",
+            "password": "password",
+            "current-key-alias": "current",
+            "polling-interval": 60
+          }
+        }
+      }
+    },
+    "user-code-deployment": {
+      "enabled": true,
+      "class-cache-mode": "ETERNAL",
+      "provider-mode": "LOCAL_CLASSES_ONLY",
+      "blacklist-prefixes": "com.foo",
+      "whitelist-prefixes": "com.bar.MyClass",
+      "provider-filter": "HAS_ATTRIBUTE:lite"
+    },
+    "crdt-replication": {
+      "max-concurrent-replication-targets": 1,
+      "replication-period-millis": 1000
+    },
+    "pn-counter": {
+      "default": {
+        "replica-count": 2147483647,
+        "split-brain-protection-ref": "splitBrainProtectionRuleWithThreeNodes",
+        "statistics-enabled": true
+      }
+    },
+    "advanced-network": {
+      "enabled": false,
+      "join": {
+        "multicast": {
+          "enabled": true,
+          "loopbackModeEnabled": true,
+          "multicast-group": "1.2.3.4",
+          "multicast-port": 12345,
+          "multicast-timeout-seconds": 5,
+          "multicast-time-to-live": 10,
+          "trusted-interfaces": [
+            "10.10.1.*",
+            "10.10.2.*"
+          ]
+        },
+        "tcp-ip": {
+          "enabled": false,
+          "connection-timeout-seconds": 123,
+          "required-member": "dummy",
+          "member": "dummy1,dummy2",
+          "interface": "127.0.0.10",
+          "members": "dummy3,dummy4",
+          "member-list": [
+            "dummy5",
+            "dummy6"
+          ]
+        },
+        "aws": {
+          "enabled": false,
+          "access-key": "my-access-key",
+          "secret-key": "my-secret-key",
+          "iam-role": "dummy",
+          "region": "us-west-1",
+          "host-header": "ec2.amazonaws.com",
+          "security-group-name": "hazelcast-sg",
+          "tag-key": "type",
+          "tag-value": "hz-nodes",
+          "use-public-ip": true
+        },
+        "gcp": {
+          "enabled": false,
+          "zones": "us-east1-b,us-east1-c"
+        },
+        "azure": {
+          "enabled": false,
+          "client-id": "CLIENT_ID",
+          "client-secret": "CLIENT_SECRET",
+          "tenant-id": "TENANT_ID",
+          "subscription-id": "SUB_ID",
+          "cluster-id": "HZLCAST001",
+          "group-name": "RESOURCE-GROUP-NAME"
+        },
+        "kubernetes": {
+          "enabled": false,
+          "namespace": "MY-KUBERNETES-NAMESPACE",
+          "service-name": "MY-SERVICE-NAME",
+          "service-label-name": "MY-SERVICE-LABEL-NAME",
+          "service-label-value": "MY-SERVICE-LABEL-VALUE"
+        },
+        "eureka": {
+          "enabled": false,
+          "self-registration": true,
+          "namespace": "hazelcast"
+        }
+      },
+      "interfaces": {
+        "enabled": true,
+        "interfaces": [
+          "10.10.1.*"
+        ]
+      },
+      "failure-detector": {
+        "icmp": {
+          "enabled": false,
+          "timeout-milliseconds": 1000,
+          "fail-fast-on-startup": true,
+          "interval-milliseconds": 1000,
+          "max-attempts": 2,
+          "parallel-mode": true,
+          "ttl": 255
+        }
+      },
+      "member-address-provider": {
+        "enabled": false,
+        "class-name": "DummyMemberAddressProvider",
+        "properties": {
+          "foo": "bar"
+        }
+      },
+      "member-server-socket-endpoint-config": {
+        "outbound-ports": [
+          "33000-35000",
+          37000370013700237003,
+          "38000,38500-38600"
+        ],
+        "interfaces": {
+          "enabled": true,
+          "interfaces": [
+            "10.10.1.*"
+          ]
+        },
+        "ssl": {
+          "enabled": true,
+          "factory-class-name": "com.hazelcast.examples.MySSLContextFactory",
+          "properties": {
+            "foo": "bar"
+          }
+        },
+        "socket-interceptor": {
+          "enabled": true,
+          "class-name": "com.hazelcast.examples.MySocketInterceptor",
+          "properties": {
+            "foo": "bar"
+          }
+        },
+        "socket-options": {
+          "buffer-direct": true,
+          "tcp-no-delay": true,
+          "keep-alive": true,
+          "connect-timeout-seconds": 64,
+          "send-buffer-size-kb": 25,
+          "receive-buffer-size-kb": 33,
+          "linger-seconds": 99
+        },
+        "port": {
+          "port-count": 100,
+          "auto-increment": true,
+          "port": 5701
+        },
+        "public-address": "dummy",
+        "reuse-address": true
+      },
+      "client-server-socket-endpoint-config": {
+        "outbound-ports": [
+          "38000,38500-38600"
+        ],
+        "interfaces": {
+          "enabled": false,
+          "interfaces": [
+            "10.10.1.*"
+          ]
+        },
+        "ssl": {
+          "enabled": true,
+          "factory-class-name": "com.hazelcast.examples.MySSLContextFactory",
+          "properties": {
+            "foo": "bar"
+          }
+        },
+        "socket-interceptor": {
+          "enabled": true,
+          "class-name": "com.hazelcast.examples.MySocketInterceptor",
+          "properties": {
+            "foo": "bar"
+          }
+        },
+        "port": {
+          "port-count": 100,
+          "auto-increment": true,
+          "port": 9999
+        },
+        "public-address": "10.10.0.10",
+        "reuse-address": true
+      },
+      "rest-server-socket-endpoint-config": {
+        "name": "internal-server-socket",
+        "interfaces": {
+          "enabled": false,
+          "interfaces": [
+            "10.10.1.*"
+          ]
+        },
+        "port": {
+          "auto-increment": false,
+          "port": 8080
+        },
+        "public-address": "192.168.1.10",
+        "reuse-address": true,
+        "endpoint-groups": {
+          "WAN": {
+            "enabled": true
+          },
+          "CLUSTER_READ": {
+            "enabled": true
+          },
+          "CLUSTER_WRITE": {
+            "enabled": false
+          },
+          "HEALTH_CHECK": {
+            "enabled": true
+          }
+        }
+      },
+      "wan-endpoint-config": {
+        "endpoint-tokyo": {
+          "ssl": {
+            "enabled": true,
+            "factory-class-name": "com.hazelcast.examples.MySSLContextFactory",
+            "properties": {
+              "foo": "bar"
+            }
+          }
+        },
+        "endpoint-london": {
+          "symmetric-encryption": {
+            "enabled": true,
+            "algorithm": "Algorithm",
+            "salt": "thesalt",
+            "password": "thepassword",
+            "iteration-count": 1000
+          }
+        }
+      },
+      "wan-server-socket-endpoint-config": {
+        "wan-server-socket-config": {
+          "interfaces": {
+            "enabled": false,
+            "interfaces": [
+              "192.168.8.101",
+              "10.20.10.100"
+            ]
+          }
+        }
+      },
+      "memcache-server-socket-endpoint-config": {
+        "name": "memcache",
+        "port": {
+          "auto-increment": false,
+          "port-count": 10,
+          "port": 6000
+        }
+      }
+    },
+    "cp-subsystem": {
+      "cp-member-count": 10,
+      "group-size": 3,
+      "session-time-to-live-seconds": 60,
+      "session-heartbeat-interval-seconds": 5,
+      "missing-cp-member-auto-removal-seconds": 120,
+      "fail-on-indeterminate-operation-state": false,
+      "persistence-enabled": true,
+      "base-dir": "custom-cp-dir",
+      "data-load-timeout-seconds": 30,
+      "raft-algorithm": {
+        "leader-election-timeout-in-millis": 2000,
+        "leader-heartbeat-period-in-millis": 5000,
+        "max-missed-leader-heartbeat-count": 5,
+        "append-request-max-entry-count": 50,
+        "commit-index-advance-count-to-snapshot": 1000,
+        "uncommitted-entry-count-to-reject-new-appends": 100,
+        "append-request-backoff-timeout-in-millis": 100
+      },
+      "semaphores": {
+        "sem1": {
+          "jdk-compatible": true,
+          "initial-permits": 1
+        },
+        "sem2": {
+          "jdk-compatible": false,
+          "initial-permits": 2
+        }
+      },
+      "locks": {
+        "lock1": {
+          "lock-acquire-limit": 1
+        },
+        "lock2": {
+          "lock-acquire-limit": 2
+        }
+      }
+    },
+    "metrics": {
+      "enabled": false,
+      "management-center": {
+        "enabled": false,
+        "retention-seconds": 30
+      },
+      "jmx": {
+        "enabled": false
+      },
+      "collection-frequency-seconds": 10
+    }
+  }
+}
