@@ -50,22 +50,18 @@ public class HzYamlSchemaTest {
         Reflections reflections = new Reflections(configuration);
         return reflections.getResources(Pattern.compile(".*\\.json")).stream()
                 .filter(e -> e.startsWith("testcases"))
-                .filter(e -> !e.substring(e.lastIndexOf('/') + 1).startsWith("failure-"))
                 .map(path -> buildArgs(path));
     }
 
     private static Arguments buildArgs(String path) {
-        JSONObject instance = readJSONObject("/" + path);
-        String fileName = path.substring(path.lastIndexOf('/') + 1);
-        String dirName = path.substring(0, path.lastIndexOf('/'));
-
-        JSONObject failureReport = null;
-        try {
-            failureReport = readJSONObject("/" + dirName + "/failure-" + fileName);
-        } catch (NullPointerException e) {
-
+        JSONObject testcase = readJSONObject("/" + path);
+        Object error = testcase.get("error");
+        if (error == JSONObject.NULL) {
+            error = null;
         }
-        return Arguments.of(path.substring("testcases/".length(), path.length() - 5), instance, failureReport);
+        return Arguments.of(path.substring("testcases/".length(), path.length() - 5),
+                testcase.getJSONObject("instance"),
+                error);
     }
 
     @ParameterizedTest

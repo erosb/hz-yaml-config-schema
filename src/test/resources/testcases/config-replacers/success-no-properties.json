@@ -1,12 +1,15 @@
 {
-  "hazelcast": {
-    "config-replacers": {
-      "fail-if-value-missing": false,
-      "replacers": [
-        {
-          "class-name": "com.hazelcast.config.replacer.EncryptionReplacer"
-        }
-      ]
+  "instance": {
+    "hazelcast": {
+      "config-replacers": {
+        "fail-if-value-missing": false,
+        "replacers": [
+          {
+            "class-name": "com.hazelcast.config.replacer.EncryptionReplacer"
+          }
+        ]
+      }
     }
-  }
+  },
+  "error": null
 }

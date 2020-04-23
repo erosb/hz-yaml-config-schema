@@ -1,7 +1,0 @@
-{
-  "schemaLocation": "#/properties/hazelcast",
-  "pointerToViolation": "#/hazelcast",
-  "causingExceptions": [],
-  "keyword": "additionalProperties",
-  "message": "extraneous key [other] is not permitted"
-}

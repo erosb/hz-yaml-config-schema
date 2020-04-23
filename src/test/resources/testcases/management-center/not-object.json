@@ -1,5 +1,14 @@
 {
-  "hazelcast": {
-    "management-center": false
+  "instance": {
+    "hazelcast": {
+      "management-center": false
+    }
+  },
+  "error": {
+    "schemaLocation": "#/definitions/ManagementCenter",
+    "pointerToViolation": "#/hazelcast/management-center",
+    "causingExceptions": [],
+    "keyword": "type",
+    "message": "expected type: JSONObject, found: Boolean"
   }
 }

@@ -1,7 +1,10 @@
 {
-  "hazelcast": {
-    "management-center": {
-      "scripting-enabled": false
+  "instance": {
+    "hazelcast": {
+      "management-center": {
+        "scripting-enabled": false
+      }
     }
-  }
+  },
+  "error": null
 }

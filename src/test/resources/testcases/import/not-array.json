@@ -1,5 +1,15 @@
 {
-  "hazelcast": {
-    "import": true
+  "instance": {
+    "hazelcast": {
+      "import": true
+    }
+  },
+  "error": {
+    "schemaLocation": "#/definitions/Import",
+    "pointerToViolation": "#/hazelcast/import",
+    "causingExceptions": [],
+    "keyword": "type",
+    "message": "expected type: JSONArray, found: Boolean"
   }
+
 }

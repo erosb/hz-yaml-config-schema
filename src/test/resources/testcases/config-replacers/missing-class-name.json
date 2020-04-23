@@ -1,12 +1,21 @@
 {
-  "hazelcast": {
-    "config-replacers": {
-      "fail-if-value-missing": false,
-      "replacers": [
-        {
+  "instance": {
+    "hazelcast": {
+      "config-replacers": {
+        "fail-if-value-missing": false,
+        "replacers": [
+          {
 
-        }
-      ]
+          }
+        ]
+      }
     }
+  },
+  "error": {
+    "schemaLocation": "#/definitions/ConfigReplacers/properties/replacers/items",
+    "pointerToViolation": "#/hazelcast/config-replacers/replacers/0",
+    "causingExceptions": [],
+    "keyword": "required",
+    "message": "required key [class-name] not found"
   }
 }
