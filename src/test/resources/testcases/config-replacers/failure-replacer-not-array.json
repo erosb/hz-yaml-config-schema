@@ -1,0 +1,7 @@
+{
+  "schemaLocation": "#/definitions/ConfigReplacers/properties/replacers",
+  "pointerToViolation": "#/hazelcast/config-replacers/replacers",
+  "causingExceptions": [],
+  "keyword": "type",
+  "message": "expected type: JSONArray, found: Boolean"
+}

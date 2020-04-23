@@ -1,0 +1,7 @@
+{
+  "hazelcast": {
+    "import": [
+      "./other.yaml"
+    ]
+  }
+}

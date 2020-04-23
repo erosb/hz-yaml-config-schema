@@ -1,0 +1,7 @@
+{
+  "hazelcast": {
+    "management-center": {
+      "scripting-enabled": false
+    }
+  }
+}

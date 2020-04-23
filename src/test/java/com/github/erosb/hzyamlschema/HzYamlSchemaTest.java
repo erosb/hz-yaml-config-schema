@@ -16,7 +16,6 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,7 +70,7 @@ public class HzYamlSchemaTest {
 
     @ParameterizedTest
     @MethodSource("buildTestcases")
-    void alltst(String testName, JSONObject input, JSONObject expectedValidationError) {
+    void runAllTests(String testName, JSONObject input, JSONObject expectedValidationError) {
         try {
             SCHEMA.validate(input);
             if (expectedValidationError != null) {

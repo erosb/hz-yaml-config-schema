@@ -1,0 +1,9 @@
+{
+  "hazelcast": {
+    "management-center": {
+      "trusted-interfaces": [
+        null, {}, true, 22.0
+      ]
+    }
+  }
+}

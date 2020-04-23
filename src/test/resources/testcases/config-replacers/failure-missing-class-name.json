@@ -1,0 +1,7 @@
+{
+  "schemaLocation": "#/definitions/ConfigReplacers/properties/replacers/items",
+  "pointerToViolation": "#/hazelcast/config-replacers/replacers/0",
+  "causingExceptions": [],
+  "keyword": "required",
+  "message": "required key [class-name] not found"
+}

@@ -1,0 +1,9 @@
+{
+  "hazelcast": {
+    "management-center": {
+      "scripting-enabled": null,
+      "other": true,
+      "trusted-interfaces": {}
+    }
+  }
+}
