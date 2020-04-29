@@ -59,7 +59,8 @@ public class HzYamlSchemaTest {
         if (error == JSONObject.NULL) {
             error = null;
         }
-        return Arguments.of(path.substring("testcases/".length(), path.length() - 5),
+        String testName = path.substring("testcases/".length(), path.length() - 5);
+        return Arguments.of(testName,
                 testcase.getJSONObject("instance"),
                 error);
     }

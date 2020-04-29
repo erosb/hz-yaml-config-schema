@@ -52,7 +52,7 @@
           "$ref": "#/TODO"
         },
         "map": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/Map"
         },
         "multimap": {
           "$ref": "#/TODO"
@@ -152,7 +152,9 @@
                 "type": "object"
               }
             },
-            "required": ["class-name"]
+            "required": [
+              "class-name"
+            ]
           }
         }
       }
@@ -182,7 +184,13 @@
           "default": false
         },
         "group-type": {
-          "enum": ["HOST_AWARE", "CUSTOM", "PER_MEMBER", "ZONE_AWARE", "SPI"],
+          "enum": [
+            "HOST_AWARE",
+            "CUSTOM",
+            "PER_MEMBER",
+            "ZONE_AWARE",
+            "SPI"
+          ],
           "default": "PER_MEMBER"
         },
         "member-group": {
@@ -194,7 +202,8 @@
             }
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "ExecutorService": {
       "type": "object",
@@ -273,14 +282,7 @@
               "default": 100
             },
             "class-name": {
-              "allOf": [
-                {
-                  "default": "PutIfAbsentMergePolicy"
-                },
-                {
-                  "$ref": "#/definitions/MergePolicy"
-                }
-              ]
+              "$ref": "#/definitions/MergePolicy"
             }
           }
         }
@@ -293,15 +295,337 @@
     },
     "MergePolicy": {
       "enum": [
-        "ExpirationTimeMergePolicy", "HyperLogLogMergePolicy", "HigherHitsMergePolicy",
-        "PutIfAbsentMergePolicy", "DiscardMergePolicy", "LatestUpdateMergePolicy",
-        "PassThroughMergePolicy", "LatestAccessMergePolicy"
-      ]
+        "ExpirationTimeMergePolicy",
+        "HyperLogLogMergePolicy",
+        "HigherHitsMergePolicy",
+        "PutIfAbsentMergePolicy",
+        "DiscardMergePolicy",
+        "LatestUpdateMergePolicy",
+        "PassThroughMergePolicy",
+        "LatestAccessMergePolicy"
+      ],
+      "default": "PutIfAbsentMergePolicy"
     },
     "CardinalityEstimator": {
       "additionalProperties": {
+      }
+    },
+    "InMemoryFormat": {
+      "enum": [
+        "BINARY",
+        "OBJECT",
+        "NATIVE"
+      ],
+      "default": "BINARY",
+      "description": "Binary type that will be used for storing records. Possible values: BINARY (default): keys and values will be stored as binary data. OBJECT: values will be stored in their object forms. NATIVE: values will be stored in non-heap region of JVM (Hazelcast Enterprise only)"
+    },
+    "Eviction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eviction-policy": {
+          "enum": [
+            "LRU",
+            "LFU",
+            "NONE",
+            "RANDOM"
+          ],
+          "default": "NONE"
+        },
+        "max-size-policy": {
+          "enum": [
+            "PER_NODE",
+            "PER_PARTITION",
+            "USED_HEAP_PERCENTAGE",
+            "USED_HEAP_SIZE",
+            "FREE_HEAP_PERCENTAGE",
+            "FREE_HEAP_SIZE",
+            "ENTRY_COUNT",
+            "USED_NATIVE_MEMORY_SIZE",
+            "USED_NATIVE_MEMORY_PERCENTAGE",
+            "FREE_NATIVE_MEMORY_SIZE",
+            "FREE_NATIVE_MEMORY_PERCENTAGE"
+          ],
+          "default": "PER_NODE"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 2147483647
+        }
+      }
+    },
+    "Map": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "in-memory-format": {
+            "$ref": "#/definitions/InMemoryFormat"
+          },
+          "metadata-policy": {
+            "enum": [
+              "CREATE_ON_UPDATE",
+              "OFF"
+            ],
+            "default": "OFF"
+          },
+          "statistics-enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "cache-deserialized-values": {
+            "enum": [
+              "INDEX_ONLY",
+              "NEVER",
+              "ALWAYS"
+            ],
+            "default": "INDEX_ONLY"
+          },
+          "backup-count": {
+            "description": "Number of synchronous backups. For example, if 1 is set as the backup count, then all entries of the map will be copied to another JVM for fail-safety. 0 means no sync backup.",
+            "type": "integer",
+            "minimum": 0,
+            "default": 1
+          },
+          "async-backup-count": {
+            "description": "The number of asynchronous backups. 0 means no backups.",
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+          },
+          "time-to-live-seconds": {
+            "description": "The maximum number of seconds for each entry to stay in the map.",
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+          },
+          "max-idle-seconds": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+          },
+          "eviction": {
+            "$ref": "#/definitions/Eviction"
+          },
+          "merge-policy": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "batch-size": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 100
+              },
+              "class-name": {
+                "$ref": "#/definitions/MergePolicy"
+              }
+            }
+          },
+          "read-backup-data": {
+            "description": "Sets if read-backup-data (reading local backup entries) is enabled for this map.",
+            "type": "boolean",
+            "default": false
+          },
+          "hot-restart": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "enabled": {
+                "description": "Sets whether hot restart is enabled on related data structure.",
+                "type": "boolean",
+                "default": false
+              },
+              "fsync": {
+                "description": "Sets whether disk write should be followed by an fsync() system call.",
+                "type": "boolean",
+                "default": false
+              }
+            }
+          },
+          "event-journal": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "default": false
+              },
+              "capacity": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 10000,
+                "description": "The capacity is the total number of items that the event journal can hold at any moment. The actual number of items contained in the journal can be lower. NOTE: The capacity is shared equally between all partitions. This is done by assigning each partition {capacity / partitionCount} available slots in the event journal. Because of this, the effective total capacity may be somewhat lower and you must make sure that the configured capacity is at least greater than the partition count."
+              },
+              "time-to-live-seconds": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0,
+                "description": "Time to live is the time the event journal retains items before removing them from the journal. The events are removed on journal read and write actions, not while the journal is idle. Time to live can be disabled by setting timeToLiveSeconds to 0. This means that the events never expire but they can be overwritten when the capacity of the journal is exceeded."
+              }
+            }
+          },
+          "merkle-tree": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "default": false
+              },
+              "depth": {
+                "type": "integer",
+                "minimum": 2,
+                "maximum": 27,
+                "default": 10
+              }
+            }
+          },
+          "map-store": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "default": true
+              },
+              "initial-mode": {
+                "enum": ["LAZY", "EAGER"],
+                "default": "LAZY",
+                "description": "LAZY: Default load mode where load is async; EAGER: load mode where load is blocked till all partitions are loaded."
+              },
+              "write-delay-seconds": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0,
+                "description": "The number of seconds to delay before writing (storing) the dirty records."
+              },
+              "write-batch-size": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1,
+                "description": "The number of operations to be included in each batch processing round."
+              },
+              "write-coalescing": {
+                "type": "boolean",
+                "default": true,
+                "description": " Setting writeCoalescing is meaningful if you are using write-behind MapStore. When writeCoalescing is true, only the latest store operation on a key in the writeDelaySeconds time-window will be reflected to MapStore."
+              },
+              "class-name": {
+                "type": "string",
+                "description": "The name for the MapStore implementation class"
+              },
+              "factory-class-name": {
+                "type": "string",
+                "description": "The name for the MapStoreFactory implementation class"
+              },
+              "properties": {
+                "type": "object",
+                "default": {}
+              }
+            },
+            "default": {
+              "enabled": false
+            }
+          },
+          "near-cache": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "time-to-live-seconds": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0,
+                "description": "The maximum number of seconds for each entry to stay in the Near Cache (time to live). Entries that are older than timeToLiveSeconds will automatically be evicted from the Near Cache."
+              },
+              "max-idle-seconds": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0,
+                "description": "The maximum number of seconds each entry can stay in the Near Cache as untouched (not-read). Entries that are not read (touched) more than maxIdleSeconds value will get removed from the Near Cache. Accepts any integer between 0 and Integer#MAX_VALUE. The value 0 means Integer#MAX_VALUE. The default is 0."
+              },
+              "invalidate-on-change": {
+                "type": "boolean",
+                "default": true,
+                "description": "Sets if Near Cache entries are invalidated when the entries in the backing data structure are changed. When this setting is enabled, a Hazelcast instance with a Near Cache listens for cluster-wide changes on the entries of the backing data structure and invalidates its corresponding Near Cache entries. Changes done on the local Hazelcast instance always invalidate the Near Cache immediately."
+              },
+              "in-memory-format": {
+                "$ref": "#/definitions/InMemoryFormat"
+              },
+              "cache-local-entries": {
+                "type": "boolean",
+                "default": false,
+                "description": "Sets if local entries are also cached in the Near Cache. This is useful when the in-memory format of the Near Cache is different from the backing data structure. This setting has no meaning on Hazelcast clients, since they have no local entries."
+              },
+              "eviction": {
+                "$ref": "#/definitions/Eviction"
+              }
+            }
+          },
+          "wan-replication-ref":  {
+            "type": "object",
+            "additionalProperties": {
+              "merge-policy-class-name": {
+                "$ref": "#/definitions/MergePolicy"
+              },
+              "republishing-enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Sets if incoming WAN events to this member should be republished (forwarded) to this WAN replication reference."
+              },
+              "filters": {
+                "type": "array",
+                "items":  {
+                  "type": "string"
+                },
+                "description": "Array of class names implementing the CacheWanEventFilter or MapWanEventFilter for filtering outbound WAN replication events. NOTE: EE only"
+              }
+            }
+          },
+          "indexes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties":  {
+                "type": {
+                  "enum": ["SORTED", "BITMAP", "HASH"],
+                  "default": "SORTED"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "attributes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1
+                },
+                "bitmap-index-options": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "unique-key": {
+                      "type": "string",
+                      "default": "__key"
+                    },
+                    "unique-key-transformation": {
+                      "enum": ["OBJECT", "LONG", "RAW"],
+                      "default": "OBJECT",
+                      "description": "Defines an assortment of transformations which can be applied to unique-key values. OBJECT: Extracted unique key value is interpreted as an object value. Non-negative unique ID is assigned to every distinct object value. LONG: Extracted unique key value is interpreted as a whole integer value of byte, short, int or long type. The extracted value is upcasted to long (if necessary) and unique non-negative ID is assigned to every distinct value. RAW: Extracted unique key value is interpreted as a whole integer value of byte, short, int or long type. The extracted value is upcasted to long (if necessary) and the resulting value is used directly as an ID."
+                    }
+                  }
+                }
+              },
+              "required": ["attributes"]
+            }
+          }
+        }
       }
     }
   },
   "TODO": false
 }
+
