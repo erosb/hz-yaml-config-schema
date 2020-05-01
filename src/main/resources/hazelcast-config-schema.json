@@ -602,20 +602,24 @@
           "wan-replication-ref":  {
             "type": "object",
             "additionalProperties": {
-              "merge-policy-class-name": {
-                "$ref": "#/definitions/MergePolicy"
-              },
-              "republishing-enabled": {
-                "type": "boolean",
-                "default": true,
-                "description": "Sets if incoming WAN events to this member should be republished (forwarded) to this WAN replication reference."
-              },
-              "filters": {
-                "type": "array",
-                "items":  {
-                  "type": "string"
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "merge-policy-class-name": {
+                  "$ref": "#/definitions/MergePolicy"
                 },
-                "description": "Array of class names implementing the CacheWanEventFilter or MapWanEventFilter for filtering outbound WAN replication events. NOTE: EE only"
+                "republishing-enabled": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Sets if incoming WAN events to this member should be republished (forwarded) to this WAN replication reference."
+                },
+                "filters": {
+                  "type": "array",
+                  "items":  {
+                    "type": "string"
+                  },
+                  "description": "Array of class names implementing the CacheWanEventFilter or MapWanEventFilter for filtering outbound WAN replication events. NOTE: EE only"
+                }
               }
             }
           },
