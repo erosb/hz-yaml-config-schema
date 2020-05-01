@@ -355,6 +355,42 @@
         }
       }
     },
+    "IndexConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties":  {
+        "type": {
+          "enum": ["SORTED", "BITMAP", "HASH"],
+          "default": "SORTED"
+        },
+        "name": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "bitmap-index-options": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "unique-key": {
+              "type": "string",
+              "default": "__key"
+            },
+            "unique-key-transformation": {
+              "enum": ["OBJECT", "LONG", "RAW"],
+              "default": "OBJECT",
+              "description": "Defines an assortment of transformations which can be applied to unique-key values. OBJECT: Extracted unique key value is interpreted as an object value. Non-negative unique ID is assigned to every distinct object value. LONG: Extracted unique key value is interpreted as a whole integer value of byte, short, int or long type. The extracted value is upcasted to long (if necessary) and unique non-negative ID is assigned to every distinct value. RAW: Extracted unique key value is interpreted as a whole integer value of byte, short, int or long type. The extracted value is upcasted to long (if necessary) and the resulting value is used directly as an ID."
+            }
+          }
+        }
+      },
+      "required": ["attributes"]
+    },
     "Map": {
       "type": "object",
       "additionalProperties": {
@@ -586,42 +622,127 @@
           "indexes": {
             "type": "array",
             "items": {
+              "$ref": "#/definitions/IndexConfig"
+            }
+          },
+          "attributes":  {
+            "type": "object",
+            "additionalProperties": {
               "type": "object",
               "additionalProperties": false,
-              "properties":  {
-                "type": {
-                  "enum": ["SORTED", "BITMAP", "HASH"],
-                  "default": "SORTED"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "attributes": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "minItems": 1
-                },
-                "bitmap-index-options": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "unique-key": {
-                      "type": "string",
-                      "default": "__key"
-                    },
-                    "unique-key-transformation": {
-                      "enum": ["OBJECT", "LONG", "RAW"],
-                      "default": "OBJECT",
-                      "description": "Defines an assortment of transformations which can be applied to unique-key values. OBJECT: Extracted unique key value is interpreted as an object value. Non-negative unique ID is assigned to every distinct object value. LONG: Extracted unique key value is interpreted as a whole integer value of byte, short, int or long type. The extracted value is upcasted to long (if necessary) and unique non-negative ID is assigned to every distinct value. RAW: Extracted unique key value is interpreted as a whole integer value of byte, short, int or long type. The extracted value is upcasted to long (if necessary) and the resulting value is used directly as an ID."
-                    }
-                  }
+              "properties": {
+                "extractor-class-name": {
+                  "type": "string",
+                  "description": "Fully qualified class name of the extractor used to extract the value of the attribute."
                 }
               },
-              "required": ["attributes"]
+              "description": "Contains the configuration of a custom attribute that will be extracted from a Map's entry using a given ValueExtractor."
+            }
+          },
+          "entry-listeners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/EntryListener"
+            },
+            "description": "Adds listeners (listener classes) for the map entries using the \"entry-listener\" sub-elements"
+          },
+          "partition-lost-listeners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "split-brain-protection-ref": {
+            "type": "string"
+          },
+          "query-caches": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "include-value": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Enables value caching."
+                },
+                "predicate": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties":  {
+                    "class-name": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "Predicate to filter events which will be applied to the query cache."
+                },
+                "entry-listeners": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/EntryListener"
+                  }
+                },
+                "in-memory-format": {
+                  "$ref": "#/definitions/InMemoryFormat"
+                },
+                "populate": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Flag to enable/disable initial population of the QueryCache."
+                },
+                "coalesce": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "delay-seconds": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "default": 0,
+                  "description": "Minimum time in seconds that an event waits in the member's buffer."
+                },
+                "batch-size": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "default": 1,
+                  "description": "The batch size which will be used to determine number of events to be sent in a batch to QueryCache."
+                },
+                "buffer-size": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "default": 16,
+                  "description": "Maximum number of events which can be stored in a buffer of partition."
+                },
+                "eviction": {
+                  "$ref": "#/definitions/Eviction"
+                },
+                "indexes":  {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/IndexConfig"
+                  }
+                }
+              }
             }
           }
+        }
+      }
+    },
+    "EntryListener": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "class-name": {
+          "type": "string"
+        },
+        "include-value": {
+          "type": "boolean",
+          "default": false,
+          "description": "True if you want the entry event to contain the item values."
+        },
+        "local": {
+          "type": "boolean",
+          "default": false,
+          "description": "True if you want to listen to the entries on the local member."
         }
       }
     }
