@@ -1,0 +1,151 @@
+{
+  "instance": {
+    "hazelcast": {
+      "map": {
+        "my-map": {
+          "unknown": [],
+          "in-memory-format": "invalid",
+          "metadata-policy": "invalid",
+          "statistics-enabled": null,
+          "cache-deserialized-values": "invalid",
+          "backup-count": -1,
+          "async-backup-count": -1,
+          "time-to-live-seconds": -1,
+          "eviction": {
+            "size": -1,
+            "unknown": []
+          },
+          "merge-policy": {
+            "unknown": [],
+            "batch-size": -1,
+            "class-name": {}
+          },
+          "read-backup-data": null,
+          "hot-restart": {
+            "enabled": 2,
+            "fsync": "3",
+            "unknown": true
+          },
+          "event-journal": {
+            "enabled": 1,
+            "capacity": -10000,
+            "time-to-live-seconds": -3,
+            "unknown": true
+          },
+          "merkle-tree": {
+            "enabled": 0,
+            "depth": 1,
+            "unknown": true
+          },
+          "map-store": {
+            "enabled": [],
+            "initial-mode": "invalid",
+            "class-name": null,
+            "write-delay-seconds": -60,
+            "write-batch-size": -1000,
+            "write-coalescing": null,
+            "properties": [],
+            "unknown": true
+          },
+          "near-cache": {
+            "time-to-live-seconds": -1,
+            "max-idle-seconds": -60,
+            "invalidate-on-change": 1,
+            "in-memory-format": "invalid",
+            "cache-local-entries": -2,
+            "eviction": {
+              "size": -1000,
+              "max-size-policy": "unknown",
+              "eviction-policy": "unknown",
+              "unknown": true
+            },
+            "unknown": true
+          },
+          "wan-replication-ref": {
+            "my-wan-cluster-batch": {
+              "merge-policy-class-name": "invalid",
+              "filters": [
+                1,
+                2
+              ],
+              "republishing-enabled": 0,
+              "unknown": true
+            }
+          },
+          "indexes": [
+            {
+              "type": "invalid",
+              "attributes": [3],
+              "bitmap-index-options": {
+                "unique-key": {},
+                "unique-key-transformation": "invalid",
+                "unknown": true
+              },
+              "unknown": true
+            }
+          ],
+          "attributes": {
+            "my-attr": {
+              "extractor-class-name": 2,
+              "unknown": true
+            },
+            "other-attr": {}
+          },
+          "entry-listeners": [
+            {
+              "class-name": null,
+              "include-value": 1,
+              "local": 0,
+              "unknown": true
+            },
+            {}
+          ],
+          "partition-lost-listeners": [
+            2
+          ],
+          "split-brain-protection-ref": 2,
+          "query-caches": {
+            "myContQueryCache": {
+              "include-value": 2,
+              "predicate": {
+                "class-name": null,
+                "unknown": true
+              },
+              "entry-listeners": [
+                {
+                  "class-name": null,
+                  "unknown": true
+                },
+                {}
+              ],
+              "in-memory-format": 3,
+              "populate": 1,
+              "coalesce": 0,
+              "delay-seconds": -3,
+              "batch-size": 0,
+              "buffer-size": -32,
+              "unknown": true,
+              "eviction": {
+                "unknown": true,
+                "size": -1000,
+                "max-size-policy": "invalid",
+                "eviction-policy": "invalid"
+              },
+              "indexes": [
+                {
+                  "attributes": [
+                    "name",
+                    3
+                  ],
+                  "unknown": true
+                },
+                {}
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "error": null
+}

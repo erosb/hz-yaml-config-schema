@@ -636,6 +636,7 @@
                   "description": "Fully qualified class name of the extractor used to extract the value of the attribute."
                 }
               },
+              "required": ["extractor-class-name"],
               "description": "Contains the configuration of a custom attribute that will be extracted from a Map's entry using a given ValueExtractor."
             }
           },
@@ -744,7 +745,8 @@
           "default": false,
           "description": "True if you want to listen to the entries on the local member."
         }
-      }
+      },
+      "required": ["class-name"]
     }
   },
   "TODO": false
