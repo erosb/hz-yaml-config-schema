@@ -516,25 +516,25 @@
         "message": "invalid is not a valid enum value"
       },
       {
-        "schemaLocation": "#/definitions/Map/additionalProperties/properties/merge-policy",
+        "schemaLocation": "#/definitions/MergePolicy",
         "pointerToViolation": "#/hazelcast/map/my-map/merge-policy",
         "causingExceptions": [
           {
-            "schemaLocation": "#/definitions/Map/additionalProperties/properties/merge-policy",
+            "schemaLocation": "#/definitions/MergePolicy",
             "pointerToViolation": "#/hazelcast/map/my-map/merge-policy",
             "causingExceptions": [],
             "keyword": "additionalProperties",
             "message": "extraneous key [unknown] is not permitted"
           },
           {
-            "schemaLocation": "#/definitions/Map/additionalProperties/properties/merge-policy/properties/batch-size",
+            "schemaLocation": "#/definitions/MergePolicy/properties/batch-size",
             "pointerToViolation": "#/hazelcast/map/my-map/merge-policy/batch-size",
             "causingExceptions": [],
             "keyword": "minimum",
             "message": "-1 is not greater or equal to 0"
           },
           {
-            "schemaLocation": "#/definitions/MergePolicy",
+            "schemaLocation": "#/definitions/MergePolicyClassName",
             "pointerToViolation": "#/hazelcast/map/my-map/merge-policy/class-name",
             "causingExceptions": [],
             "keyword": "enum",
@@ -751,7 +751,7 @@
             "message": "extraneous key [unknown] is not permitted"
           },
           {
-            "schemaLocation": "#/definitions/MergePolicy",
+            "schemaLocation": "#/definitions/MergePolicyClassName",
             "pointerToViolation": "#/hazelcast/map/my-map/wan-replication-ref/my-wan-cluster-batch/merge-policy-class-name",
             "causingExceptions": [],
             "keyword": "enum",

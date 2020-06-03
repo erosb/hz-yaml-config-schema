@@ -49,7 +49,7 @@
           "$ref": "#/definitions/CardinalityEstimator"
         },
         "queue": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/Queue"
         },
         "map": {
           "$ref": "#/definitions/Map"
@@ -275,16 +275,7 @@
           "type": "string"
         },
         "merge-policy": {
-          "type": "object",
-          "properties": {
-            "batch-size": {
-              "type": "integer",
-              "default": 100
-            },
-            "class-name": {
-              "$ref": "#/definitions/MergePolicy"
-            }
-          }
+          "$ref": "#/definitions/MergePolicy"
         }
       }
     },
@@ -293,7 +284,7 @@
       "minimum": 1,
       "default": 16
     },
-    "MergePolicy": {
+    "MergePolicyClassName": {
       "enum": [
         "ExpirationTimeMergePolicy",
         "HyperLogLogMergePolicy",
@@ -305,6 +296,20 @@
         "LatestAccessMergePolicy"
       ],
       "default": "PutIfAbsentMergePolicy"
+    },
+    "MergePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "batch-size": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 100
+        },
+        "class-name": {
+          "$ref": "#/definitions/MergePolicyClassName"
+        }
+      }
     },
     "CardinalityEstimator": {
       "additionalProperties": {
@@ -358,9 +363,13 @@
     "IndexConfig": {
       "type": "object",
       "additionalProperties": false,
-      "properties":  {
+      "properties": {
         "type": {
-          "enum": ["SORTED", "BITMAP", "HASH"],
+          "enum": [
+            "SORTED",
+            "BITMAP",
+            "HASH"
+          ],
           "default": "SORTED"
         },
         "name": {
@@ -382,14 +391,20 @@
               "default": "__key"
             },
             "unique-key-transformation": {
-              "enum": ["OBJECT", "LONG", "RAW"],
+              "enum": [
+                "OBJECT",
+                "LONG",
+                "RAW"
+              ],
               "default": "OBJECT",
               "description": "Defines an assortment of transformations which can be applied to unique-key values. OBJECT: Extracted unique key value is interpreted as an object value. Non-negative unique ID is assigned to every distinct object value. LONG: Extracted unique key value is interpreted as a whole integer value of byte, short, int or long type. The extracted value is upcasted to long (if necessary) and unique non-negative ID is assigned to every distinct value. RAW: Extracted unique key value is interpreted as a whole integer value of byte, short, int or long type. The extracted value is upcasted to long (if necessary) and the resulting value is used directly as an ID."
             }
           }
         }
       },
-      "required": ["attributes"]
+      "required": [
+        "attributes"
+      ]
     },
     "Map": {
       "type": "object",
@@ -446,18 +461,7 @@
             "$ref": "#/definitions/Eviction"
           },
           "merge-policy": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "batch-size": {
-                "type": "integer",
-                "minimum": 0,
-                "default": 100
-              },
-              "class-name": {
-                "$ref": "#/definitions/MergePolicy"
-              }
-            }
+            "$ref": "#/definitions/MergePolicy"
           },
           "read-backup-data": {
             "description": "Sets if read-backup-data (reading local backup entries) is enabled for this map.",
@@ -527,7 +531,10 @@
                 "default": true
               },
               "initial-mode": {
-                "enum": ["LAZY", "EAGER"],
+                "enum": [
+                  "LAZY",
+                  "EAGER"
+                ],
                 "default": "LAZY",
                 "description": "LAZY: Default load mode where load is async; EAGER: load mode where load is blocked till all partitions are loaded."
               },
@@ -599,14 +606,14 @@
               }
             }
           },
-          "wan-replication-ref":  {
+          "wan-replication-ref": {
             "type": "object",
             "additionalProperties": {
               "type": "object",
               "additionalProperties": false,
               "properties": {
                 "merge-policy-class-name": {
-                  "$ref": "#/definitions/MergePolicy"
+                  "$ref": "#/definitions/MergePolicyClassName"
                 },
                 "republishing-enabled": {
                   "type": "boolean",
@@ -615,7 +622,7 @@
                 },
                 "filters": {
                   "type": "array",
-                  "items":  {
+                  "items": {
                     "type": "string"
                   },
                   "description": "Array of class names implementing the CacheWanEventFilter or MapWanEventFilter for filtering outbound WAN replication events. NOTE: EE only"
@@ -629,7 +636,7 @@
               "$ref": "#/definitions/IndexConfig"
             }
           },
-          "attributes":  {
+          "attributes": {
             "type": "object",
             "additionalProperties": {
               "type": "object",
@@ -640,7 +647,9 @@
                   "description": "Fully qualified class name of the extractor used to extract the value of the attribute."
                 }
               },
-              "required": ["extractor-class-name"],
+              "required": [
+                "extractor-class-name"
+              ],
               "description": "Contains the configuration of a custom attribute that will be extracted from a Map's entry using a given ValueExtractor."
             }
           },
@@ -674,7 +683,7 @@
                 "predicate": {
                   "type": "object",
                   "additionalProperties": false,
-                  "properties":  {
+                  "properties": {
                     "class-name": {
                       "type": "string"
                     }
@@ -720,7 +729,7 @@
                 "eviction": {
                   "$ref": "#/definitions/Eviction"
                 },
-                "indexes":  {
+                "indexes": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/IndexConfig"
@@ -750,7 +759,114 @@
           "description": "True if you want to listen to the entries on the local member."
         }
       },
-      "required": ["class-name"]
+      "required": [
+        "class-name"
+      ]
+    },
+    "Queue": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "statistics-enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "When you enable it, you can retrieve queue statistics."
+          },
+          "max-size": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Maximum size of the queue. When a JVM's local queue size reaches the maximum, all put/offer operations will be blocked until the queue size of the JVM goes below this maximum. Its default value is 0, meaning Integer.MAX_VALUE"
+          },
+          "backup-count": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 0,
+            "description": "Number of synchronous backups. Queue is a non-partitioned data structure, so all entries of a Queue resides in one partition. When this parameter is '1', it means there will be 1 backup of that Queue in another member in the cluster. When it is '2', 2 members will have the backup. 0 means there will be no backups."
+          },
+          "async-backup-count": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "Number of asynchronous backups."
+          },
+          "empty-queue-ttl": {
+            "type": "integer",
+            "default": -1,
+            "description": "Used to purge unused or empty queues. If you define a value (time in seconds) for this element, then your queue will be destroyed if it stays empty or unused for that time."
+          },
+          "item-listeners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ItemListener"
+            }
+          },
+          "queue-store": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Includes configuration elements and attributes for your queue store implementation. When you want to load/store the distributed queue items from/to a persistent datastore, first implement Hazelcast's QueueStore interface and then configure it using this element",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "default": true
+              },
+              "class-name": {
+                "description": "The fully qualified name of the QueueStore implementation you want to use",
+                "type": "string"
+              },
+              "factory-class-name": {
+                "description": "The fully qualified name of the QueueStoreFactory which will be created by Hazelcast to instantiate QueueStores.",
+                "type": "string"
+              },
+              "properties": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "binary": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If you do not reach the queue store from an external application, you might prefer to insert the items in binary form. To do so, set this property to true and skip the deserialization step, which is a performance optimization."
+                  },
+                  "memory-limit": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Number of items after which Hazelcast will store items only to datastore. For example, if the memory limit is 1000, then the 1001st item will be put only to datastore. This feature is useful when you want to avoid out-of-memory conditions. If you want to always use memory, you can set it to Integer.MAX_VALUE."
+                  },
+                  "bulk-load": {
+                    "type": "integer",
+                    "default": 250,
+                    "description": "Size of the bulks loaded from QueueStore when the queue is initialized."
+                  }
+                }
+              }
+            }
+          },
+          "split-brain-protection-ref": {
+            "type": "string"
+          },
+          "merge-policy": {
+            "$ref": "#/definitions/MergePolicy"
+          }
+        }
+      }
+    },
+    "ItemListener": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "include-value": {
+          "type": "boolean",
+          "default": true,
+          "description": "Set to true if you want the item event to contain the item values."
+        },
+        "class-name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "class-name"
+      ]
     }
   },
   "TODO": false
