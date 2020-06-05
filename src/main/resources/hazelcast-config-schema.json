@@ -55,7 +55,7 @@
           "$ref": "#/definitions/Map"
         },
         "multimap": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/Multimap"
         },
         "replicatedmap": {
           "$ref": "#/TODO"
@@ -867,6 +867,48 @@
       "required": [
         "class-name"
       ]
+    },
+    "Multimap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "backup-count": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 1
+          },
+          "async-backup-count": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+          },
+          "value-collection-type": {
+            "enum": [
+              "SET",
+              "LIST"
+            ]
+          },
+          "binary": {
+            "type": "boolean",
+            "default": true,
+            "description": "The in-memory format being used for representing the multimap. If it is false, the OBJECT in-memory format will be used."
+          },
+          "entry-listeners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/EntryListener"
+            }
+          },
+          "split-brain-protection-ref": {
+            "type": "string"
+          },
+          "merge-policy": {
+            "$ref": "#/definitions/MergePolicy"
+          }
+        }
+      }
     }
   },
   "TODO": false
