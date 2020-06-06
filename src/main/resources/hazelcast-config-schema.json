@@ -58,7 +58,7 @@
           "$ref": "#/definitions/Multimap"
         },
         "replicatedmap": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/ReplicatedMap"
         },
         "cache": {
           "$ref": "#/TODO"
@@ -894,6 +894,40 @@
             "type": "boolean",
             "default": true,
             "description": "The in-memory format being used for representing the multimap. If it is false, the OBJECT in-memory format will be used."
+          },
+          "entry-listeners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/EntryListener"
+            }
+          },
+          "split-brain-protection-ref": {
+            "type": "string"
+          },
+          "merge-policy": {
+            "$ref": "#/definitions/MergePolicy"
+          }
+        }
+      }
+    },
+    "ReplicatedMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "in-memory-format": {
+            "$ref": "#/definitions/InMemoryFormat"
+          },
+          "async-fillup": {
+            "type": "boolean",
+            "default": true,
+            "description": "Specifies whether the replicated map is available for reads before the initial replication is completed. If false, no Exception will be thrown when the replicated map is not yet ready, but call is blocked until the initial replication is completed."
+          },
+          "statistics-enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "When you enable it, you can retrieve replicated map entry statistics such as creation time, expiration time, number of hits, key, value, etc."
           },
           "entry-listeners": {
             "type": "array",
