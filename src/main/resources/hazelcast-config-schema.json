@@ -64,7 +64,7 @@
           "$ref": "#/definitions/Cache"
         },
         "list": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/List"
         },
         "set": {
           "$ref": "#/TODO"
@@ -118,7 +118,7 @@
           "$ref": "#/definitions/AdvancedNetwork"
         },
         "cp-subsystem": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/CPSubsystem"
         },
         "metrics": {
           "$ref": "#/definitions/Metrics"
@@ -219,7 +219,7 @@
           },
           "queue-capacity": {
             "type": "integer",
-            "minimum": 1,
+            "minimum": 0,
             "default": 2147483647
           },
           "split-brain-protection-ref": {
@@ -435,16 +435,10 @@
             "default": "INDEX_ONLY"
           },
           "backup-count": {
-            "description": "Number of synchronous backups. For example, if 1 is set as the backup count, then all entries of the map will be copied to another JVM for fail-safety. 0 means no sync backup.",
-            "type": "integer",
-            "minimum": 0,
-            "default": 1
+            "$ref": "#/definitions/BackupCount"
           },
           "async-backup-count": {
-            "description": "The number of asynchronous backups. 0 means no backups.",
-            "type": "integer",
-            "minimum": 0,
-            "default": 0
+            "$ref": "#/definitions/AsyncBackupCount"
           },
           "time-to-live-seconds": {
             "description": "The maximum number of seconds for each entry to stay in the map.",
@@ -780,16 +774,10 @@
             "description": "Maximum size of the queue. When a JVM's local queue size reaches the maximum, all put/offer operations will be blocked until the queue size of the JVM goes below this maximum. Its default value is 0, meaning Integer.MAX_VALUE"
           },
           "backup-count": {
-            "type": "integer",
-            "default": 1,
-            "minimum": 0,
-            "description": "Number of synchronous backups. Queue is a non-partitioned data structure, so all entries of a Queue resides in one partition. When this parameter is '1', it means there will be 1 backup of that Queue in another member in the cluster. When it is '2', 2 members will have the backup. 0 means there will be no backups."
+            "$ref": "#/definitions/BackupCount"
           },
           "async-backup-count": {
-            "type": "integer",
-            "minimum": 0,
-            "default": 0,
-            "description": "Number of asynchronous backups."
+            "$ref": "#/definitions/AsyncBackupCount"
           },
           "empty-queue-ttl": {
             "type": "integer",
@@ -875,14 +863,10 @@
         "additionalProperties": false,
         "properties": {
           "backup-count": {
-            "type": "integer",
-            "minimum": 0,
-            "default": 1
+            "$ref": "#/definitions/BackupCount"
           },
           "async-backup-count": {
-            "type": "integer",
-            "minimum": 0,
-            "default": 0
+            "$ref": "#/definitions/AsyncBackupCount"
           },
           "value-collection-type": {
             "enum": [
@@ -1032,18 +1016,10 @@
             "default": "BINARY"
           },
           "backup-count": {
-            "type": "integer",
-            "default": 1,
-            "minimum": 0,
-            "maximum": 6,
-            "description": "Number of synchronous backups. If it is 1, for example, then all entries of the cache are copied to one other instance as synchronous for fail-safety."
+            "$ref": "#/definitions/BackupCount"
           },
           "async-backup-count": {
-            "type": "integer",
-            "default": 0,
-            "minimum": 0,
-            "maximum": 6,
-            "description": "Number of asynchronous backups. For example, if it is 1, then all entries of the cache are copied to one other instance as asynchronous for fail-safety. The sum of \"backup-count\" and \"async-backup-count\" cannot be larger than 6"
+            "$ref": "#/definitions/AsyncBackupCount"
           },
           "eviction": {
             "$ref": "#/definitions/Eviction"
@@ -1207,513 +1183,207 @@
       },
       "description": "When you want to use a Hazelcast member as a lite member, set this element's \"enabled\" attribute to true in that member's YAML configuration. Lite members do not store data, do not have partitions and are used mainly to execute tasks and register listeners."
     },
-    "WanEndpointConfig": {
+    "CPSubsystem": {
+      "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Name of the endpoint configuration. Only relevant when defining WAN server sockets."
+        "cp-member-count": {
+          "default": 0,
+          "anyOf": [
+            {
+              "const": 0
+            },
+            {
+              "type": "integer",
+              "minimum": 3
+            }
+          ],
+          "description": "Number of CP Members to initialize the CP Subsystem. The CP subsystem is enabled when a positive value is set. After the CP subsystem is initialized successfully, more CP members can be added at run-time and number of active CP members can go beyond the configured CP member count. Number of CP members can be smaller than total size of the Hazelcast cluster. For instance, you can run 5 CP members in a 20-member Hazelcast cluster. If set, must be greater than or equal to \"group-size\"."
         },
-        "outbound-ports": {
-          "type": "array",
-          "items": {
-            "type": "string"
+        "group-size": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 7,
+          "not": {
+            "multipleOf": 2
           },
-          "description": "By default, Hazelcast lets the system pick up an ephemeral port during socket bind operation. But security policies/firewalls may require to restrict outbound ports to be used by Hazelcast-enabled applications. To fulfill this requirement, you can configure Hazelcast to use only defined outbound ports."
+          "description": "Number of CP members to run CP groups. If set, it must be an odd number between 3 and 7. Otherwise, \"cp-member-count\" is respected. If set, must be smaller than or equal to \"cp-member-count\"."
         },
-        "interfaces": {
-          "type": "object",
-          "additionalProperties": false,
-          "description": "Specifies which network interfaces Hazelcast should use. You need to set its \"enabled\" sub-element\nto true to be able to use your defined interfaces. By default, it is disabled.\nYou can define multiple interfaces using a nested \"interfaces\" sequence.",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "default": false
-            },
-            "interfaces": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
+        "session-time-to-live-seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 300,
+          "description": "Duration for a CP session to be kept alive after the last received heartbeat. The session will be closed if there is no new heartbeat this duration. Session TTL must be decided wisely. If a very low value is set, CP session of a Hazelcast instance can be closed prematurely if the instance temporarily loses connectivity to the CP subsystem because of a network partition or a GC pause. In such an occasion, all CP resources of this Hazelcast instance, such as FencedLock or ISemaphore, are released. On the other hand, if a very large value is set, CP resources can remain assigned to an actually crashed Hazelcast instance for too long and liveliness problems can occur. The CP subsystem offers an API, CPSessionManagementService, to deal with liveliness issues related to CP sessions. In order to prevent premature session expires, session TTL configuration can be set a relatively large value and CPSessionManagementService#forceCloseSession() can be manually called to close CP session of a crashed Hazelcast instance. Must be greater than \"session-heartbeat-interval-seconds\", and smaller than or equal to \"missing-cp-member-auto-removal-seconds\"."
         },
-        "ssl": {
-          "type": "object",
-          "additionalProperties": false,
-          "description": "Lets you configure SSL using the SSL context factory. This feature is available only in Hazelcast Enterprise. To be able to use it, encryption should NOT be enabled and you should first implement your SSLContextFactory class. Its configuration contains the factory class and SSL properties.",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "default": false
-            },
-            "factory-class-name": {
-              "type": "string"
-            },
-            "properties": {
-              "type": "object"
-            }
-          }
+        "session-heartbeat-interval-seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 5,
+          "description": "Interval for the periodically-committed CP session heartbeats. A CP session is started on a CP group with the first session-based request of a Hazelcast instance. After that moment, heartbeats are periodically committed to the CP group. Must be smaller than \"session-time-to-live-seconds\"."
         },
-        "socket-interceptor": {
-          "type": "object",
-          "additionalProperties": false,
-          "description": "Lets you add custom hooks to join and perform connection procedures (like identity checking using Kerberos, etc.). This feature is available only in Hazelcast Enterprise. To be able to use it, you should first implement the MemberSocketInterceptor (for members joining to a cluster) or SocketInterceptor (for clients connecting to a member) class. Its configuration contains the class you implemented and socket interceptor properties.",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "default": false
-            },
-            "class-name": {
-              "type": "string"
-            },
-            "properties": {
-              "type": "object"
-            }
-          }
+        "missing-cp-member-auto-removal-seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 14400,
+          "description": "Duration to wait before automatically removing a missing CP member from the CP subsystem. When a CP member leaves the cluster, it is not automatically removed from the CP subsystem, since it could be still alive and left the cluster because of a network partition. On the other hand, if a missing CP member is actually crashed, it creates a danger for its CP groups, because it will be still part of majority calculations. This situation could lead to losing majority of CP groups if multiple CP members leave the cluster over time. With the default configuration, missing CP members will be automatically removed from the CP subsystem after 4 hours. This feature is very useful in terms of fault tolerance when CP member count is also configured to be larger than group size. In this case, a missing CP member will be safely replaced in its CP groups with other available CP members in the CP subsystem. This configuration also implies that no network partition is expected to be longer than the configured duration. Must be greater than or equal to \"session-time-to-live-seconds\". If a missing CP member comes back alive after it is automatically removed from the CP subsystem with this feature, that CP member must be terminated manually. The default is 4 hours."
         },
-        "symmetric-encryption": {
-          "type": "object",
-          "additionalProperties": false,
-          "description": "Lets you encrypt the entire socket level communication among all Hazelcast members. This feature is available only in Hazelcast Enterprise.  Its configuration contains the encryption properties and the same configuration must be placed to all members.",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "default": false
-            },
-            "algorithm": {
-              "type": "string",
-              "default": "PBEWithMD5AndDES"
-            },
-            "salt": {
-              "type": "string",
-              "default": "thesalt"
-            },
-            "password": {
-              "type": "string",
-              "default": "thepassword"
-            },
-            "iteration-count": {
-              "type": "integer",
-              "default": 19
-            }
-          }
+        "fail-on-indeterminate-operation-state": {
+          "type": "boolean",
+          "default": false,
+          "description": "Offers a choice between at-least-once and at-most-once execution of the operations on top of the Raft consensus algorithm. It is disabled by default and offers at-least-once execution guarantee. If enabled, it switches to at-most-once execution guarantee. When you invoke an API method on a CP data structure proxy, it replicates an internal operation to the corresponding CP group. After this operation is committed to majority of this CP group by the Raft leader node, it sends a response for the public API call. If a failure causes loss of the response, then the calling side cannot determine if the operation is committed on the CP group or not. In this case, if this configuration is disabled, the operation is replicated again to the CP group, and hence could be committed multiple times. If it is enabled, the public API call fails with com.hazelcast.core.IndeterminateOperationStateException"
         },
-        "socket-options": {
+        "persistence-enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": " Flag to denote whether or not CP Subsystem Persistence is enabled. If enabled, CP members persist their local CP data to stable storage and can recover from crashes."
+        },
+        "base-dir": {
+          "type": "string",
+          "default": "cp-data",
+          "description": "Base directory to store all CP data when persistence-enabled is true. This directory can be shared between multiple CP members. Each CP member creates a unique directory for itself under the base directory. This is especially useful for cloud environments where CP members generally use a shared filesystem."
+        },
+        "data-load-timeout-seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 120,
+          "description": "Timeout duration for CP members to restore their data from disk. CP member fails its startup if it cannot complete its CP data restore rocess in the configured duration."
+        },
+        "raft-algorithm": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "buffer-direct": {
-              "type": "boolean",
-              "default": false,
-              "description": "Specifies whether direct or non-direct buffers should be allocated for the socket."
-            },
-            "tcp-no-delay": {
-              "type": "boolean",
-              "default": true,
-              "description": "Specifies whether Nagle's algorithm should be disabled. The default value is true meaning that Nagle's algorithm is disabled."
-            },
-            "keep-alive": {
-              "type": "boolean",
-              "default": true,
-              "description": "Specifies whether TCP keep-alive should be enabled."
-            },
-            "connect-timeout-seconds": {
+            "leader-election-timeout-in-millis": {
               "type": "integer",
-              "default": 0,
-              "description": "Specifies the TCP timeout in seconds."
+              "default": 2000,
+              "minimum": 1,
+              "description": "Leader election timeout in milliseconds. If a candidate cannot win majority of the votes in time, a new election round is initiated."
             },
-            "send-buffer-size-kb": {
+            "leader-heartbeat-period-in-millis": {
               "type": "integer",
-              "default": 128,
-              "description": "Specifies the size of the send buffer."
+              "default": 5000,
+              "minimum": 1,
+              "description": "Period in milliseconds for a leader to send heartbeat messages to its followers."
             },
-            "receive-buffer-size-kb": {
+            "max-missed-leader-heartbeat-count": {
               "type": "integer",
-              "default": 128,
-              "description": "Specifies the size of the receive buffer."
+              "default": 5,
+              "minimum": 1,
+              "description": "Maximum number of missed leader heartbeats to trigger a new leader election."
             },
-            "linger-seconds": {
-              "type": "integer",
-              "default": 0,
-              "description": "Specifies the TCP linger seconds."
-            }
-          }
-        }
-      }
-    },
-    "SocketEndpointConfig": {
-      "$ref": "#/definitions/WanEndpointConfig",
-      "properties": {
-        "port": {
-          "type": "object",
-          "description": "The ports which Hazelcast will use to communicate between cluster members.",
-          "additionalProperties": false,
-          "properties": {
-            "port": {
-              "type": "integer",
-              "default": 5701
-            },
-            "port-count": {
+            "append-request-max-entry-count": {
               "type": "integer",
               "default": 100,
-              "description": "The default value is 100, meaning that Hazelcast will try to bind 100 ports. If you set the value of port as 5701, as members join the cluster, Hazelcast tries to find ports between 5701 and 5801. You can change the port count in cases like having large instances on a single machine or you are willing to have only a few ports assigned."
+              "minimum": 1,
+              "description": "Maximum number of entries that can be sent in a single batch of append entries request."
             },
-            "auto-increment": {
-              "type": "boolean",
-              "default": true,
-              "description": "If port is set to 5701, Hazelcast will try to find free ports between 5701 and 5801. Normally, you will not need to change this value, but it comes in handy when needed. You may also want to choose to use only one port. In that case, you can disable the auto-increment feature of port by setting its value as false."
+            "commit-index-advance-count-to-snapshot": {
+              "type": "integer",
+              "default": 10000,
+              "minimum": 1,
+              "description": "Number of new commits to initiate a new snapshot after the last snapshot."
+            },
+            "uncommitted-entry-count-to-reject-new-appends": {
+              "type": "integer",
+              "default": 100,
+              "minimum": 1,
+              "description": "Maximum number of uncommitted entries in the leader's Raft log before temporarily rejecting new requests of callers."
+            },
+            "append-request-backoff-timeout-in-millis": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 100,
+              "description": "Timeout in milliseconds for append request backoff. After the leader sends an append request to a follower, it will not send a subsequent append request until the follower responds to the former request or this timeout occurs."
             }
           }
         },
-        "public-address": {
-          "type": "string",
-          "description": "Overrides the public address of a node. By default, a node selects its socket address as its public address. But behind a network address translation (NAT), two endpoints (nodes) may not be able to see/access each other. If both nodes set their public addresses to their defined addresses on NAT, then they can communicate with each other. In this case, their public addresses are not an address of a local network interface but a virtual address defined by NAT. This is optional to set and useful when you have a private cloud."
-        },
-        "reuse-address": {
-          "type": "boolean",
-          "default": false,
-          "description": "When you shutdown a cluster member, the server socket port will be in the TIME_WAIT state for the next couple of minutes. If you start the member right after shutting it down, you may not be able to bind it to the same port because it is in the TIME_WAIT state. If you set reuse-address to true, the TIME_WAIT state is ignored and you can bind the member to the same port again."
-        }
-      }
-    },
-    "AdvancedNetwork": {
-      "additionalProperties": false,
-      "description": "The advanced network configuration provides fine-tuning capabilities for configuring network with the ability of defining separate server sockets for different protocols, such as for member-member and member-client communication. This configuration renders exclusive or relation with the generic \"network\" configuration element.",
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Indicates whether the advanced network configuration is enabled or not."
-        },
-        "join": {
+        "semaphores": {
           "type": "object",
-          "description": "This configuration lets you choose a discovery mechanism that Hazelcast will use to form a cluster. Hazelcast can find members by multicast, TCP/IP lists and by various discovery mechanisms provided by different cloud APIs.",
-          "additionalProperties": false,
-          "properties": {
-            "multicast": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "enabled": {
-                  "type": "boolean",
-                  "default": true,
-                  "description": "Specifies whether multicast discovery is enabled."
-                },
-                "loopbackModeEnabled": {
-                  "type": "boolean",
-                  "default": false,
-                  "description": "Specifies if the loopback mode is enabled for multicast discovery."
-                },
-                "multicast-group": {
-                  "type": "string",
-                  "default": "224.2.2.3",
-                  "description": "Specifies the multicast group IP address when you want to create clusters within the same network."
-                },
-                "multicast-port": {
-                  "type": "string",
-                  "default": "54327",
-                  "description": "Specifies the multicast socket port that the Hazelcast member listens to and sends discovery messages through."
-                },
-                "multicast-time-to-live": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 255,
-                  "description": "Time-to-live value for multicast packets sent out to control the scope of multicasts."
-                },
-                "multicast-timeout-seconds": {
-                  "type": "integer",
-                  "default": 2,
-                  "description": "Only when the members are starting up, this timeout (in seconds) specifies the period during which a member waits for a multicast response from another node. For example, if you set it as 60 seconds, each node will wait for 60 seconds until a leader node is selected."
-                },
-                "trusted-interfaces": {
-                  "type": "array",
-                  "description": "Includes IP addresses of trusted members. When a node wants to join to the cluster, its join request will be rejected if it is not a trusted member. You can give an IP addresses range using the wildcard (*) on the last digit of IP address (e.g. 192.168.1.* or 192.168.1.100-110).",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "tcp-ip": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "enabled": {
-                  "type": "boolean",
-                  "default": false,
-                  "description": "Specifies whether the TCP/IP discovery is enabled or not."
-                },
-                "connection-timeout-seconds": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "default": 5,
-                  "description": "The maximum amount of time Hazelcast is going to try to connect to a well known member before giving up. Setting it to a too low value could mean that a member is not able to connect to a cluster. Setting it to a too high value means that member startup could slow down because of longer timeouts (e.g. when a well known member is not up). Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster."
-                },
-                "required-member": {
-                  "type": "string",
-                  "description": "IP address of the required member. Cluster will only be formed if the member with this IP address is found."
-                },
-                "member": {
-                  "type": "string",
-                  "description": "IP address(es) of one or more well known members. Once members are connected to these well known ones, all member addresses will be communicated with each other. You can also give comma separated IP addresses using the \"members\" element or list the members with the \"member\" element under \"member-list\"."
-                },
-                "members": {
-                  "type": "string",
-                  "description": "Comma separated IP addresses of one or more well known members."
-                },
-                "member-list": {
-                  "type": "array",
-                  "description": "Sequence of IP address(es) of one or more well known members.",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "interface": {
-                  "type": "string",
-                  "description": "IP address(es) of one or more well known members."
-                }
-              }
-            },
-            "aws": {
-              "type": "object",
-              "description": "Please refer to https://github.com/hazelcast/hazelcast-aws/#configuration for the configuration details.",
-              "properties": {
-                "enabled": {
-                  "type": "boolean",
-                  "default": false,
-                  "description": "Specifies whether AWS discovery is enabled or not."
-                }
-              }
-            },
-            "gcp": {
-              "type": "object",
-              "description": "Please refer to https://github.com/hazelcast/hazelcast-gcp/#configuration for the configuration details.",
-              "properties": {
-                "enabled": {
-                  "type": "boolean",
-                  "default": false,
-                  "description": "Specifies whether Google Cloud Platform discovery is enabled or not."
-                }
-              }
-            },
-            "azure": {
-              "type": "object",
-              "description": "Please refer to https://github.com/hazelcast/hazelcast-azure/#configuring-at-hazelcast-side for the configuration details.",
-              "properties": {
-                "enabled": {
-                  "type": "boolean",
-                  "default": false,
-                  "description": "Specifies whether Microsoft Azure discovery is enabled or not."
-                }
-              }
-            },
-            "kubernetes": {
-              "type": "object",
-              "description": "Please refer to https://github.com/hazelcast/hazelcast-kubernetes#hazelcast-configuration for the configuration details.",
-              "properties": {
-                "enabled": {
-                  "type": "boolean",
-                  "default": false,
-                  "description": "Specifies whether Kubernetes discovery is enabled or not."
-                }
-              }
-            },
-            "eureka": {
-              "type": "object",
-              "description": "Please refer to https://github.com/hazelcast/hazelcast-eureka#hazelcast-configuration for the configuration details.",
-              "properties": {
-                "enabled": {
-                  "type": "boolean",
-                  "default": false,
-                  "description": "Specifies whether Eureka Service Registry discovery is enabled or not."
-                }
-              }
-            },
-            "discovery-strategies": {
-              "type": "object",
-              "description": "Set its \"enabled\" sub-element to true for discovery in various cloud infrastructures. You also need to set the value of \"hazelcast.discovery.enabled\" property to true. See the description of the \"properties\" element to learn how to do this. You can define multiple discovery strategies using the \"discovery-strategy\" sub-element and its properties. Please refer to http://docs.hazelcast.org/docs/latest/manual/html-single/index.html#discovering-cluster-members to see the properties you can use."
-            }
-          }
-        },
-        "member-address-provider": {
-          "type": "object",
-          "description": "IMPORTANT\\nThis configuration is not intended to provide addresses of other cluster members with which the Hazelcast instance will form a cluster. This is an SPI for advanced use in cases where the DefaultAddressPicker does not pick suitable addresses to bind to and publish to other cluster members. For instance, this could allow easier deployment in some cases when running on Docker, AWS or other cloud environments. That said, if you are just starting with Hazelcast, you will probably want to set the member addresses by using the tcp-ip or multicast configuration or adding a discovery strategy. Member address provider allows to plug in own strategy to customize:\\n1. What address Hazelcast will bind to\\n2. What address Hazelcast will advertise to other members on which they can bind to\\nIn most environments you don't need to customize this and the default strategy will work just fine. However in some cloud environments the default strategy does not make the right choice and the member address provider delegates the process of address picking to external code.",
-          "additionalProperties": false,
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "default": false,
-              "description": "Specifies whether the member address provider SPI is enabled or not."
-            },
-            "class-name": {
-              "type": "string",
-              "description": "The name of the class implementing the com.hazelcast.spi.MemberAddressProvider interface."
-            },
-            "properties": {
-              "type": "object",
-              "description": "The properties that will be provided when constructing the provided MemberAddressProvider. Hazelcast will first try instantiating the provided class by invoking a constructor accepting a single java.util.Properties instance. In the case where there is no such constructor and there are also no properties defined by this configuration, Hazelcast will exceptionally try to use the no-arg constructor."
-            }
-          }
-        },
-        "failure-detector": {
-          "type": "object",
-          "description": "A failure detector is responsible to determine if a member in the cluster is unreachable or crashed. Please refer to https://docs.hazelcast.org/docs/latest/manual/html-single/index.html#failure-detector-configuration for the failure detectors implemented by Hazelcast.",
-          "additionalProperties": false,
-          "properties": {
-            "icmp": {
-              "type": "object",
-              "description": "ICMP can be used in addition to the other detectors. It operates at layer 3 and detects network and hardware issues more quickly.",
-              "additionalProperties": false,
-              "properties": {
-                "timeout-milliseconds": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "default": 1000,
-                  "description": "Timeout in milliseconds before declaring a failed ping."
-                },
-                "fail-fast-on-startup": {
-                  "type": "boolean",
-                  "default": true,
-                  "description": "Cluster Member will fail to start if it is unable to action an ICMP ping command when ICMP is enabled. Failure is usually due to OS level restrictions."
-                },
-                "interval-milliseconds": {
-                  "type": "integer",
-                  "minimum": 1000,
-                  "default": 1000,
-                  "description": "Time in milliseconds between each ICMP ping."
-                },
-                "max-attempts": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "default": 2,
-                  "description": "Maximum number of consecutive failed attempts before declaring a member suspect."
-                },
-                "parallel-mode": {
-                  "type": "boolean",
-                  "default": true,
-                  "description": "Run ICMP detection in parallel with the Heartbeat failure detector."
-                },
-                "ttl": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "default": 255,
-                  "description": "Maximum number of times the IP Datagram (ping) can be forwarded, in most cases all Hazelcast cluster members would be within one network switch/router therefore default of 0 is usually sufficient."
-                }
-              }
-            }
-          }
-        },
-        "member-server-socket-endpoint-config": {
-          "type": "object",
-          "description": "Configures the server socket used for the member-member communication.",
-          "additionalProperties": false,
-          "$ref": "#/definitions/SocketEndpointConfig"
-        },
-        "client-server-socket-endpoint-config": {
-          "type": "object",
-          "description": "Configures the server socket used for the member-client communication.",
-          "additionalProperties": false,
-          "$ref": "#/definitions/SocketEndpointConfig"
-        },
-        "wan-server-socket-endpoint-config": {
-          "type": "object",
-          "description": "Configures the server sockets used for the WAN replication's inbound WAN connections. Multiple WAN server sockets can be configured to allow configuring separate server sockets for each inbound WAN connection.",
-          "additionalProperties": false,
-          "$ref": "#/definitions/SocketEndpointConfig"
-        },
-        "memcache-server-socket-endpoint-config": {
-          "type": "object",
-          "additionalProperties": false,
-          "$ref": "#/definitions/SocketEndpointConfig"
-        },
-        "rest-server-socket-endpoint-config": {
-          "type": "object",
-          "additionalProperties": false,
-          "description": " Controls access to Hazelcast HTTP REST API. The methods available through REST API are grouped to several REST endpoint groups, which can be specified in this section.",
-          "$ref": "#/definitions/SocketEndpointConfig",
-          "properties": {
-            "endpoint-groups": {
-              "type": "object",
-              "additionalProperties": false,
-              "description": "Enables or disables named REST endpoint groups. If a group is not listed within the rest-api configuration, then it's 'enabledByDefault' flag is used to control the behavior of the group.",
-              "properties": {
-                "CLUSTER_READ": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "description": "Group of operations for retrieving cluster state and its version.",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean",
-                      "default": true
-                    }
-                  }
-                },
-                "CLUSTER_WRITE": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "description": "Operations which changes cluster or node state or their configurations.",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean",
-                      "default": false
-                    }
-                  }
-                },
-                "HEALTH_CHECK": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "description": "Group of endpoints for HTTP health checking.",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean",
-                      "default": false
-                    }
-                  }
-                },
-                "HOT_RESTART": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "description": "Group of HTTP REST APIs related to Hot Restart feature.",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean",
-                      "default": false
-                    }
-                  }
-                },
-                "WAN": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "description": "Group of HTTP REST APIs related to WAN Replication feature",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean",
-                      "default": false
-                    }
-                  }
-                },
-                "DATA": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "description": "Group of HTTP REST APIs for data manipulation in the cluster (e.g. IMap and IQueue operations).",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean",
-                      "default": false
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "wan-endpoint-config": {
-          "type": "object",
-          "description": "This element configures socket settings for the outgoing WAN connections.",
           "additionalProperties": {
             "type": "object",
             "additionalProperties": false,
-            "$ref": "#/definitions/WanEndpointConfig"
+            "properties": {
+              "jdk-compatible": {
+                "type": "boolean",
+                "default": false,
+                "description": " Enables / disables JDK compatibility of the CP ISemaphore. When it is JDK compatible, just as in the Semaphore#release() method, a permit can be released without acquiring it first, because acquired permits are not bound to threads. However, there is no auto-cleanup of acquired permits upon Hazelcast server / client failures. If a permit holder fails, its permits must be released manually. When JDK compatibility is disabled, a HazelcastInstance must acquire permits before releasing them and it cannot release a permit that it has mot acquired. It means, you can acquire a permit from one thread and release it from another thread using the same HazelcastInstance, but not different HazelcastInstances. In this mode, acquired permits are automatically released upon failure of the holder HazelcastInstance. So there is a minor behavioral difference to the Semaphore#release() method."
+              },
+              "initial-permits": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0,
+                "description": "Number of permits to initialize the Semaphore. If a positive value is set, the Semaphore is initialized with the given number of permits."
+              }
+            }
+          },
+          "description": "Configurations for CP Semaphore instances. The CP Semaphores can be configured with mappings under keys as their names."
+        },
+        "locks": {
+          "type": "object",
+          "description": "Configurations for FencedLock instances. The FencedLocks can be configured with mappings under keys as their names.",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "lock-acquire-limit": {
+                "type": "integer",
+                "default": 0,
+                "minimum": 0,
+                "description": " Maximum number of reentrant lock acquires. Once a caller acquires the lock this many times, it will not be able to acquire the lock again, until it makes at least one unlock() call. By default, no upper bound is set for the number of reentrant lock acquires, which means that once a caller acquires a FencedLock, all of its further lock() calls will succeed. However, for instance, if you set lock-acquire-limit to 2, once a caller acquires the lock, it will be able to acquire it once more, but its third lock() call will not succeed. If lock-acquire-limit is set to 1, then the lock becomes non-reentrant."
+              }
+            }
+          }
+        }
+      }
+    },
+    "BackupCount": {
+      "description": "Number of synchronous backups. For example, if 1 is set as the backup count, then all entries of the map will be copied to another JVM for fail-safety. 0 means no sync backup. The sum of backup-count and async-backup-count can't be larger than than 6.",
+      "type": "integer",
+      "minimum": 0,
+      "default": 1,
+      "maximum": 6
+    },
+    "AsyncBackupCount": {
+      "description": "The number of asynchronous backups. 0 means no backups. The sum of backup-count and async-backup-count can't be larger than than 6.",
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "maximum": 6
+    },
+    "List": {
+      "type": "object",
+      "description": "Name-value pairs of list configurations",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "statistics-enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "When you enable it, you can retrieve list statistics."
+          },
+          "max-size": {
+            "type": "integer",
+            "default": 0,
+            "description": "Maximum size of the list (item count). 0 means Integer.MAX_VALUE."
+          },
+          "backup-count": {
+            "$ref": "#/definitions/BackupCount"
+          },
+          "async-backup-count": {
+            "$ref": "#/definitions/AsyncBackupCount"
+          },
+          "item-listeners": {
+          "type": "array",
+            "items":  {
+              "$ref": "#/definitions/ItemListener"
+            }
+          },
+          "split-brain-protection-ref": {
+            "type": "string",
+            "description":  "Adds the Split Brain Protection for this data-structure. You should set this value as a \"split-brain-protection\"'s name."
+          },
+          "merge-policy": {
+            "$ref": "#/definitions/MergePolicy"
           }
         }
       }
