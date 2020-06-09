@@ -115,7 +115,7 @@
           "$ref": "#/TODO"
         },
         "advanced-network": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/AdvancedNetwork"
         },
         "cp-subsystem": {
           "$ref": "#/TODO"
@@ -1206,6 +1206,517 @@
         }
       },
       "description": "When you want to use a Hazelcast member as a lite member, set this element's \"enabled\" attribute to true in that member's YAML configuration. Lite members do not store data, do not have partitions and are used mainly to execute tasks and register listeners."
+    },
+    "WanEndpointConfig": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the endpoint configuration. Only relevant when defining WAN server sockets."
+        },
+        "outbound-ports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "By default, Hazelcast lets the system pick up an ephemeral port during socket bind operation. But security policies/firewalls may require to restrict outbound ports to be used by Hazelcast-enabled applications. To fulfill this requirement, you can configure Hazelcast to use only defined outbound ports."
+        },
+        "interfaces": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Specifies which network interfaces Hazelcast should use. You need to set its \"enabled\" sub-element\nto true to be able to use your defined interfaces. By default, it is disabled.\nYou can define multiple interfaces using a nested \"interfaces\" sequence.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "interfaces": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "ssl": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Lets you configure SSL using the SSL context factory. This feature is available only in Hazelcast Enterprise. To be able to use it, encryption should NOT be enabled and you should first implement your SSLContextFactory class. Its configuration contains the factory class and SSL properties.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "factory-class-name": {
+              "type": "string"
+            },
+            "properties": {
+              "type": "object"
+            }
+          }
+        },
+        "socket-interceptor": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Lets you add custom hooks to join and perform connection procedures (like identity checking using Kerberos, etc.). This feature is available only in Hazelcast Enterprise. To be able to use it, you should first implement the MemberSocketInterceptor (for members joining to a cluster) or SocketInterceptor (for clients connecting to a member) class. Its configuration contains the class you implemented and socket interceptor properties.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "class-name": {
+              "type": "string"
+            },
+            "properties": {
+              "type": "object"
+            }
+          }
+        },
+        "symmetric-encryption": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Lets you encrypt the entire socket level communication among all Hazelcast members. This feature is available only in Hazelcast Enterprise.  Its configuration contains the encryption properties and the same configuration must be placed to all members.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "algorithm": {
+              "type": "string",
+              "default": "PBEWithMD5AndDES"
+            },
+            "salt": {
+              "type": "string",
+              "default": "thesalt"
+            },
+            "password": {
+              "type": "string",
+              "default": "thepassword"
+            },
+            "iteration-count": {
+              "type": "integer",
+              "default": 19
+            }
+          }
+        },
+        "socket-options": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "buffer-direct": {
+              "type": "boolean",
+              "default": false,
+              "description": "Specifies whether direct or non-direct buffers should be allocated for the socket."
+            },
+            "tcp-no-delay": {
+              "type": "boolean",
+              "default": true,
+              "description": "Specifies whether Nagle's algorithm should be disabled. The default value is true meaning that Nagle's algorithm is disabled."
+            },
+            "keep-alive": {
+              "type": "boolean",
+              "default": true,
+              "description": "Specifies whether TCP keep-alive should be enabled."
+            },
+            "connect-timeout-seconds": {
+              "type": "integer",
+              "default": 0,
+              "description": "Specifies the TCP timeout in seconds."
+            },
+            "send-buffer-size-kb": {
+              "type": "integer",
+              "default": 128,
+              "description": "Specifies the size of the send buffer."
+            },
+            "receive-buffer-size-kb": {
+              "type": "integer",
+              "default": 128,
+              "description": "Specifies the size of the receive buffer."
+            },
+            "linger-seconds": {
+              "type": "integer",
+              "default": 0,
+              "description": "Specifies the TCP linger seconds."
+            }
+          }
+        }
+      }
+    },
+    "SocketEndpointConfig": {
+      "$ref": "#/definitions/WanEndpointConfig",
+      "properties": {
+        "port": {
+          "type": "object",
+          "description": "The ports which Hazelcast will use to communicate between cluster members.",
+          "additionalProperties": false,
+          "properties": {
+            "port": {
+              "type": "integer",
+              "default": 5701
+            },
+            "port-count": {
+              "type": "integer",
+              "default": 100,
+              "description": "The default value is 100, meaning that Hazelcast will try to bind 100 ports. If you set the value of port as 5701, as members join the cluster, Hazelcast tries to find ports between 5701 and 5801. You can change the port count in cases like having large instances on a single machine or you are willing to have only a few ports assigned."
+            },
+            "auto-increment": {
+              "type": "boolean",
+              "default": true,
+              "description": "If port is set to 5701, Hazelcast will try to find free ports between 5701 and 5801. Normally, you will not need to change this value, but it comes in handy when needed. You may also want to choose to use only one port. In that case, you can disable the auto-increment feature of port by setting its value as false."
+            }
+          }
+        },
+        "public-address": {
+          "type": "string",
+          "description": "Overrides the public address of a node. By default, a node selects its socket address as its public address. But behind a network address translation (NAT), two endpoints (nodes) may not be able to see/access each other. If both nodes set their public addresses to their defined addresses on NAT, then they can communicate with each other. In this case, their public addresses are not an address of a local network interface but a virtual address defined by NAT. This is optional to set and useful when you have a private cloud."
+        },
+        "reuse-address": {
+          "type": "boolean",
+          "default": false,
+          "description": "When you shutdown a cluster member, the server socket port will be in the TIME_WAIT state for the next couple of minutes. If you start the member right after shutting it down, you may not be able to bind it to the same port because it is in the TIME_WAIT state. If you set reuse-address to true, the TIME_WAIT state is ignored and you can bind the member to the same port again."
+        }
+      }
+    },
+    "AdvancedNetwork": {
+      "additionalProperties": false,
+      "description": "The advanced network configuration provides fine-tuning capabilities for configuring network with the ability of defining separate server sockets for different protocols, such as for member-member and member-client communication. This configuration renders exclusive or relation with the generic \"network\" configuration element.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Indicates whether the advanced network configuration is enabled or not."
+        },
+        "join": {
+          "type": "object",
+          "description": "This configuration lets you choose a discovery mechanism that Hazelcast will use to form a cluster. Hazelcast can find members by multicast, TCP/IP lists and by various discovery mechanisms provided by different cloud APIs.",
+          "additionalProperties": false,
+          "properties": {
+            "multicast": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Specifies whether multicast discovery is enabled."
+                },
+                "loopbackModeEnabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Specifies if the loopback mode is enabled for multicast discovery."
+                },
+                "multicast-group": {
+                  "type": "string",
+                  "default": "224.2.2.3",
+                  "description": "Specifies the multicast group IP address when you want to create clusters within the same network."
+                },
+                "multicast-port": {
+                  "type": "string",
+                  "default": "54327",
+                  "description": "Specifies the multicast socket port that the Hazelcast member listens to and sends discovery messages through."
+                },
+                "multicast-time-to-live": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 255,
+                  "description": "Time-to-live value for multicast packets sent out to control the scope of multicasts."
+                },
+                "multicast-timeout-seconds": {
+                  "type": "integer",
+                  "default": 2,
+                  "description": "Only when the members are starting up, this timeout (in seconds) specifies the period during which a member waits for a multicast response from another node. For example, if you set it as 60 seconds, each node will wait for 60 seconds until a leader node is selected."
+                },
+                "trusted-interfaces": {
+                  "type": "array",
+                  "description": "Includes IP addresses of trusted members. When a node wants to join to the cluster, its join request will be rejected if it is not a trusted member. You can give an IP addresses range using the wildcard (*) on the last digit of IP address (e.g. 192.168.1.* or 192.168.1.100-110).",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "tcp-ip": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Specifies whether the TCP/IP discovery is enabled or not."
+                },
+                "connection-timeout-seconds": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "default": 5,
+                  "description": "The maximum amount of time Hazelcast is going to try to connect to a well known member before giving up. Setting it to a too low value could mean that a member is not able to connect to a cluster. Setting it to a too high value means that member startup could slow down because of longer timeouts (e.g. when a well known member is not up). Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster."
+                },
+                "required-member": {
+                  "type": "string",
+                  "description": "IP address of the required member. Cluster will only be formed if the member with this IP address is found."
+                },
+                "member": {
+                  "type": "string",
+                  "description": "IP address(es) of one or more well known members. Once members are connected to these well known ones, all member addresses will be communicated with each other. You can also give comma separated IP addresses using the \"members\" element or list the members with the \"member\" element under \"member-list\"."
+                },
+                "members": {
+                  "type": "string",
+                  "description": "Comma separated IP addresses of one or more well known members."
+                },
+                "member-list": {
+                  "type": "array",
+                  "description": "Sequence of IP address(es) of one or more well known members.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "interface": {
+                  "type": "string",
+                  "description": "IP address(es) of one or more well known members."
+                }
+              }
+            },
+            "aws": {
+              "type": "object",
+              "description": "Please refer to https://github.com/hazelcast/hazelcast-aws/#configuration for the configuration details.",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Specifies whether AWS discovery is enabled or not."
+                }
+              }
+            },
+            "gcp": {
+              "type": "object",
+              "description": "Please refer to https://github.com/hazelcast/hazelcast-gcp/#configuration for the configuration details.",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Specifies whether Google Cloud Platform discovery is enabled or not."
+                }
+              }
+            },
+            "azure": {
+              "type": "object",
+              "description": "Please refer to https://github.com/hazelcast/hazelcast-azure/#configuring-at-hazelcast-side for the configuration details.",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Specifies whether Microsoft Azure discovery is enabled or not."
+                }
+              }
+            },
+            "kubernetes": {
+              "type": "object",
+              "description": "Please refer to https://github.com/hazelcast/hazelcast-kubernetes#hazelcast-configuration for the configuration details.",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Specifies whether Kubernetes discovery is enabled or not."
+                }
+              }
+            },
+            "eureka": {
+              "type": "object",
+              "description": "Please refer to https://github.com/hazelcast/hazelcast-eureka#hazelcast-configuration for the configuration details.",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Specifies whether Eureka Service Registry discovery is enabled or not."
+                }
+              }
+            },
+            "discovery-strategies": {
+              "type": "object",
+              "description": "Set its \"enabled\" sub-element to true for discovery in various cloud infrastructures. You also need to set the value of \"hazelcast.discovery.enabled\" property to true. See the description of the \"properties\" element to learn how to do this. You can define multiple discovery strategies using the \"discovery-strategy\" sub-element and its properties. Please refer to http://docs.hazelcast.org/docs/latest/manual/html-single/index.html#discovering-cluster-members to see the properties you can use."
+            }
+          }
+        },
+        "member-address-provider": {
+          "type": "object",
+          "description": "IMPORTANT\\nThis configuration is not intended to provide addresses of other cluster members with which the Hazelcast instance will form a cluster. This is an SPI for advanced use in cases where the DefaultAddressPicker does not pick suitable addresses to bind to and publish to other cluster members. For instance, this could allow easier deployment in some cases when running on Docker, AWS or other cloud environments. That said, if you are just starting with Hazelcast, you will probably want to set the member addresses by using the tcp-ip or multicast configuration or adding a discovery strategy. Member address provider allows to plug in own strategy to customize:\\n1. What address Hazelcast will bind to\\n2. What address Hazelcast will advertise to other members on which they can bind to\\nIn most environments you don't need to customize this and the default strategy will work just fine. However in some cloud environments the default strategy does not make the right choice and the member address provider delegates the process of address picking to external code.",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Specifies whether the member address provider SPI is enabled or not."
+            },
+            "class-name": {
+              "type": "string",
+              "description": "The name of the class implementing the com.hazelcast.spi.MemberAddressProvider interface."
+            },
+            "properties": {
+              "type": "object",
+              "description": "The properties that will be provided when constructing the provided MemberAddressProvider. Hazelcast will first try instantiating the provided class by invoking a constructor accepting a single java.util.Properties instance. In the case where there is no such constructor and there are also no properties defined by this configuration, Hazelcast will exceptionally try to use the no-arg constructor."
+            }
+          }
+        },
+        "failure-detector": {
+          "type": "object",
+          "description": "A failure detector is responsible to determine if a member in the cluster is unreachable or crashed. Please refer to https://docs.hazelcast.org/docs/latest/manual/html-single/index.html#failure-detector-configuration for the failure detectors implemented by Hazelcast.",
+          "additionalProperties": false,
+          "properties": {
+            "icmp": {
+              "type": "object",
+              "description": "ICMP can be used in addition to the other detectors. It operates at layer 3 and detects network and hardware issues more quickly.",
+              "additionalProperties": false,
+              "properties": {
+                "timeout-milliseconds": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "default": 1000,
+                  "description": "Timeout in milliseconds before declaring a failed ping."
+                },
+                "fail-fast-on-startup": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Cluster Member will fail to start if it is unable to action an ICMP ping command when ICMP is enabled. Failure is usually due to OS level restrictions."
+                },
+                "interval-milliseconds": {
+                  "type": "integer",
+                  "minimum": 1000,
+                  "default": 1000,
+                  "description": "Time in milliseconds between each ICMP ping."
+                },
+                "max-attempts": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "default": 2,
+                  "description": "Maximum number of consecutive failed attempts before declaring a member suspect."
+                },
+                "parallel-mode": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Run ICMP detection in parallel with the Heartbeat failure detector."
+                },
+                "ttl": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "default": 255,
+                  "description": "Maximum number of times the IP Datagram (ping) can be forwarded, in most cases all Hazelcast cluster members would be within one network switch/router therefore default of 0 is usually sufficient."
+                }
+              }
+            }
+          }
+        },
+        "member-server-socket-endpoint-config": {
+          "type": "object",
+          "description": "Configures the server socket used for the member-member communication.",
+          "additionalProperties": false,
+          "$ref": "#/definitions/SocketEndpointConfig"
+        },
+        "client-server-socket-endpoint-config": {
+          "type": "object",
+          "description": "Configures the server socket used for the member-client communication.",
+          "additionalProperties": false,
+          "$ref": "#/definitions/SocketEndpointConfig"
+        },
+        "wan-server-socket-endpoint-config": {
+          "type": "object",
+          "description": "Configures the server sockets used for the WAN replication's inbound WAN connections. Multiple WAN server sockets can be configured to allow configuring separate server sockets for each inbound WAN connection.",
+          "additionalProperties": false,
+          "$ref": "#/definitions/SocketEndpointConfig"
+        },
+        "memcache-server-socket-endpoint-config": {
+          "type": "object",
+          "additionalProperties": false,
+          "$ref": "#/definitions/SocketEndpointConfig"
+        },
+        "rest-server-socket-endpoint-config": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": " Controls access to Hazelcast HTTP REST API. The methods available through REST API are grouped to several REST endpoint groups, which can be specified in this section.",
+          "$ref": "#/definitions/SocketEndpointConfig",
+          "properties": {
+            "endpoint-groups": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Enables or disables named REST endpoint groups. If a group is not listed within the rest-api configuration, then it's 'enabledByDefault' flag is used to control the behavior of the group.",
+              "properties": {
+                "CLUSTER_READ": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "Group of operations for retrieving cluster state and its version.",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                },
+                "CLUSTER_WRITE": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "Operations which changes cluster or node state or their configurations.",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                },
+                "HEALTH_CHECK": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "Group of endpoints for HTTP health checking.",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                },
+                "HOT_RESTART": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "Group of HTTP REST APIs related to Hot Restart feature.",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                },
+                "WAN": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "Group of HTTP REST APIs related to WAN Replication feature",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                },
+                "DATA": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "Group of HTTP REST APIs for data manipulation in the cluster (e.g. IMap and IQueue operations).",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "wan-endpoint-config": {
+          "type": "object",
+          "description": "This element configures socket settings for the outgoing WAN connections.",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "$ref": "#/definitions/WanEndpointConfig"
+          }
+        }
+      }
     }
   },
   "TODO": false
