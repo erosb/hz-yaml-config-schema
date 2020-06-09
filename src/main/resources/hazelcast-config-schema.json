@@ -1591,8 +1591,8 @@
                   "description": "Specifies the multicast group IP address when you want to create clusters within the same network."
                 },
                 "multicast-port": {
-                  "type": "string",
-                  "default": "54327",
+                  "type": "integer",
+                  "default": 54327,
                   "description": "Specifies the multicast socket port that the Hazelcast member listens to and sends discovery messages through."
                 },
                 "multicast-time-to-live": {
@@ -1746,6 +1746,10 @@
               "description": "ICMP can be used in addition to the other detectors. It operates at layer 3 and detects network and hardware issues more quickly.",
               "additionalProperties": false,
               "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": false
+                },
                 "timeout-milliseconds": {
                   "type": "integer",
                   "minimum": 1,
