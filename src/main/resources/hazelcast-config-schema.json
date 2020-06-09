@@ -121,7 +121,7 @@
           "$ref": "#/TODO"
         },
         "metrics": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/Metrics"
         }
       }
     }
@@ -1149,6 +1149,53 @@
       "required": [
         "class-name"
       ]
+    },
+    "Metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "The master-switch for the metrics collection. If this is set to false no metrics collection is done, regardless of the other settings."
+        },
+        "management-center": {
+          "type": "object",
+          "description": "Defines the Hazelcast Management Center related metrics configuration.",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Controls whether the metrics collected are exposed to Hazelcast Management Center. Please note that the metrics are polled by the Hazelcast Management Center, hence the members need to buffer the collected metrics between two polls. The aim for this switch is to reduce memory consumption of the metrics system if the Hazelcast Management Center is not used."
+            },
+            "retention-seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 5,
+              "description": "Sets the number of seconds the metrics will be retained on the instance. More retention means more heap memory, but allows for longer client hiccups without losing a value (for example to restart the Management Center)."
+            }
+          }
+        },
+        "jmx": {
+          "type": "object",
+          "description": "Defines the JMX related metrics configuration.",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Controls whether the metrics collected are exposed to through JMX. It is enabled by default. In order to expose the metrics, the metrics system need to be enabled via the enabled master-switch attribute."
+            }
+          }
+        },
+        "collection-frequency-seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 5,
+          "description": "Sets the metrics collection frequency in seconds."
+        }
+      }
     }
   },
   "TODO": false
