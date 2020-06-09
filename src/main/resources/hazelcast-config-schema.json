@@ -118,7 +118,7 @@
           "$ref": "#/TODO"
         },
         "cp-subsystem": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/CPSubsystem"
         },
         "metrics": {
           "$ref": "#/definitions/Metrics"
@@ -219,7 +219,7 @@
           },
           "queue-capacity": {
             "type": "integer",
-            "minimum": 1,
+            "minimum": 0,
             "default": 2147483647
           },
           "split-brain-protection-ref": {
@@ -1206,6 +1206,9 @@
         }
       },
       "description": "When you want to use a Hazelcast member as a lite member, set this element's \"enabled\" attribute to true in that member's YAML configuration. Lite members do not store data, do not have partitions and are used mainly to execute tasks and register listeners."
+    },
+    "CPSubsystem": {
+      
     }
   },
   "TODO": false
