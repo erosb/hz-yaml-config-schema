@@ -113,14 +113,14 @@
         "message": "expected type: String, found: Integer"
       },
       {
-        "schemaLocation": "#/definitions/Multimap/additionalProperties/properties/backup-count",
+        "schemaLocation": "#/definitions/BackupCount",
         "pointerToViolation": "#/hazelcast/multimap/default/backup-count",
         "causingExceptions": [],
         "keyword": "minimum",
         "message": "-1 is not greater or equal to 0"
       },
       {
-        "schemaLocation": "#/definitions/Multimap/additionalProperties/properties/async-backup-count",
+        "schemaLocation": "#/definitions/AsyncBackupCount",
         "pointerToViolation": "#/hazelcast/multimap/default/async-backup-count",
         "causingExceptions": [],
         "keyword": "minimum",
