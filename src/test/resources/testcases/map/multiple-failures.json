@@ -495,7 +495,7 @@
         "message": "3 schema violations found"
       },
       {
-        "schemaLocation": "#/definitions/Map/additionalProperties/properties/async-backup-count",
+        "schemaLocation": "#/definitions/AsyncBackupCount",
         "pointerToViolation": "#/hazelcast/map/my-map/async-backup-count",
         "causingExceptions": [],
         "keyword": "minimum",
@@ -852,7 +852,7 @@
         "message": "3 schema violations found"
       },
       {
-        "schemaLocation": "#/definitions/Map/additionalProperties/properties/backup-count",
+        "schemaLocation": "#/definitions/BackupCount",
         "pointerToViolation": "#/hazelcast/map/my-map/backup-count",
         "causingExceptions": [],
         "keyword": "minimum",
