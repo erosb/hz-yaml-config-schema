@@ -1155,10 +1155,10 @@
       "properties": {
         "enabled": {
           "type": "boolean",
-          "default": false,
-          "description": "When you want to use a Hazelcast member as a lite member, set this element's \"enabled\" attribute to true in that member's YAML configuration. Lite members do not store data, do not have partitions and are used mainly to execute tasks and register listeners."
+          "default": false
         }
-      }
+      },
+      "description": "When you want to use a Hazelcast member as a lite member, set this element's \"enabled\" attribute to true in that member's YAML configuration. Lite members do not store data, do not have partitions and are used mainly to execute tasks and register listeners."
     }
   },
   "TODO": false
