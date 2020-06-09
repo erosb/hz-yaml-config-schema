@@ -1210,13 +1210,21 @@
     "CPSubsystem": {
       "type": "object",
       "additionalProperties": false,
-      "properties":  {
+      "properties": {
         "cp-member-count": {
-          "type": "integer",
           "default": 0,
+          "anyOf": [
+            {
+              "const": 0
+            },
+            {
+              "type": "integer",
+              "minimum": 3
+            }
+          ],
           "description": "Number of CP Members to initialize the CP Subsystem. The CP subsystem is enabled when a positive value is set. After the CP subsystem is initialized successfully, more CP members can be added at run-time and number of active CP members can go beyond the configured CP member count. Number of CP members can be smaller than total size of the Hazelcast cluster. For instance, you can run 5 CP members in a 20-member Hazelcast cluster. If set, must be greater than or equal to \"group-size\"."
         },
-        "group-size":  {
+        "group-size": {
           "type": "integer",
           "minimum": 3,
           "maximum": 7,
@@ -1225,7 +1233,7 @@
           },
           "description": "Number of CP members to run CP groups. If set, it must be an odd number between 3 and 7. Otherwise, \"cp-member-count\" is respected. If set, must be smaller than or equal to \"cp-member-count\"."
         },
-        "session-time-to-live-seconds":  {
+        "session-time-to-live-seconds": {
           "type": "integer",
           "minimum": 1,
           "default": 300,
@@ -1234,7 +1242,7 @@
         "session-heartbeat-interval-seconds": {
           "type": "integer",
           "minimum": 1,
-          "default":  5,
+          "default": 5,
           "description": "Interval for the periodically-committed CP session heartbeats. A CP session is started on a CP group with the first session-based request of a Hazelcast instance. After that moment, heartbeats are periodically committed to the CP group. Must be smaller than \"session-time-to-live-seconds\"."
         },
         "missing-cp-member-auto-removal-seconds": {
@@ -1258,11 +1266,11 @@
           "default": "cp-data",
           "description": "Base directory to store all CP data when persistence-enabled is true. This directory can be shared between multiple CP members. Each CP member creates a unique directory for itself under the base directory. This is especially useful for cloud environments where CP members generally use a shared filesystem."
         },
-        "data-load-timeout-seconds":  {
+        "data-load-timeout-seconds": {
           "type": "integer",
           "minimum": 1,
           "default": 120,
-          "description":  "Timeout duration for CP members to restore their data from disk. CP member fails its startup if it cannot complete its CP data restore rocess in the configured duration."  
+          "description": "Timeout duration for CP members to restore their data from disk. CP member fails its startup if it cannot complete its CP data restore rocess in the configured duration."
         },
         "raft-algorithm": {
           "type": "object",
@@ -1312,12 +1320,12 @@
             }
           }
         },
-        "semaphores":  {
+        "semaphores": {
           "type": "object",
           "additionalProperties": {
             "type": "object",
-            "additionalProperties":  false,
-            "properties":  {
+            "additionalProperties": false,
+            "properties": {
               "jdk-compatible": {
                 "type": "boolean",
                 "default": false,
@@ -1334,7 +1342,7 @@
           "description": "Configurations for CP Semaphore instances. The CP Semaphores can be configured with mappings under keys as their names."
         },
         "locks": {
-         "type": "object",
+          "type": "object",
           "description": "Configurations for FencedLock instances. The FencedLocks can be configured with mappings under keys as their names.",
           "additionalProperties": {
             "type": "object",
