@@ -3,6 +3,7 @@ package com.github.erosb.hzyamlschema;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.jupiter.api.Disabled;
@@ -15,6 +16,9 @@ import org.reflections.scanners.ResourcesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -29,7 +33,7 @@ public class HzYamlSchemaTest {
             .load().build();
 
     private static final JSONObject readJSONObject(String absPath) {
-        return new  JSONObject(new JSONTokener(HzYamlSchemaTest.class.getResourceAsStream(absPath)));
+        return new JSONObject(new JSONTokener(HzYamlSchemaTest.class.getResourceAsStream(absPath)));
     }
 
     @Test
@@ -65,6 +69,20 @@ public class HzYamlSchemaTest {
                 error);
     }
 
+    private void sortCauses(JSONObject exc) {
+        JSONArray causes = exc.optJSONArray("causingExceptions");
+        if (causes != null) {
+            List<JSONObject> causesList = new ArrayList<>(causes.length());
+            for (int i = 0; i < causes.length(); ++i) {
+                JSONObject item = causes.getJSONObject(i);
+                sortCauses(item);
+                causesList.add(item);
+            }
+            causesList.sort(Comparator.comparing(Object::toString));
+            exc.put("causingExceptions", new JSONArray(causesList));
+        }
+    }
+
     @ParameterizedTest
     @MethodSource("buildTestcases")
     void runAllTests(String testName, JSONObject input, JSONObject expectedValidationError) {
@@ -78,10 +96,12 @@ public class HzYamlSchemaTest {
                 System.err.println(e.toJSON().toString(2));
                 fail("unexpected exception: " + e.getMessage());
             } else {
-                assertEquals(expectedValidationError.toString(2), e.toJSON().toString(2));
+                sortCauses(expectedValidationError);
+                JSONObject actualJson = e.toJSON();
+                sortCauses(actualJson);
+                assertEquals(expectedValidationError.toString(2), actualJson.toString(2));
             }
         }
     }
-
 
 }
