@@ -180,7 +180,7 @@
         "message": "expected type: String, found: Integer"
       },
       {
-        "schemaLocation": "#/definitions/Queue/additionalProperties/properties/backup-count",
+        "schemaLocation": "#/definitions/BackupCount",
         "pointerToViolation": "#/hazelcast/queue/default/backup-count",
         "causingExceptions": [],
         "keyword": "minimum",
@@ -194,7 +194,7 @@
         "message": "expected type: Boolean, found: Integer"
       },
       {
-        "schemaLocation": "#/definitions/Queue/additionalProperties/properties/async-backup-count",
+        "schemaLocation": "#/definitions/AsyncBackupCount",
         "pointerToViolation": "#/hazelcast/queue/default/async-backup-count",
         "causingExceptions": [],
         "keyword": "minimum",

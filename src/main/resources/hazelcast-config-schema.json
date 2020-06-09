@@ -64,7 +64,7 @@
           "$ref": "#/definitions/Cache"
         },
         "list": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/List"
         },
         "set": {
           "$ref": "#/TODO"
@@ -435,16 +435,10 @@
             "default": "INDEX_ONLY"
           },
           "backup-count": {
-            "description": "Number of synchronous backups. For example, if 1 is set as the backup count, then all entries of the map will be copied to another JVM for fail-safety. 0 means no sync backup.",
-            "type": "integer",
-            "minimum": 0,
-            "default": 1
+            "$ref": "#/definitions/BackupCount"
           },
           "async-backup-count": {
-            "description": "The number of asynchronous backups. 0 means no backups.",
-            "type": "integer",
-            "minimum": 0,
-            "default": 0
+            "$ref": "#/definitions/AsyncBackupCount"
           },
           "time-to-live-seconds": {
             "description": "The maximum number of seconds for each entry to stay in the map.",
@@ -780,16 +774,10 @@
             "description": "Maximum size of the queue. When a JVM's local queue size reaches the maximum, all put/offer operations will be blocked until the queue size of the JVM goes below this maximum. Its default value is 0, meaning Integer.MAX_VALUE"
           },
           "backup-count": {
-            "type": "integer",
-            "default": 1,
-            "minimum": 0,
-            "description": "Number of synchronous backups. Queue is a non-partitioned data structure, so all entries of a Queue resides in one partition. When this parameter is '1', it means there will be 1 backup of that Queue in another member in the cluster. When it is '2', 2 members will have the backup. 0 means there will be no backups."
+            "$ref": "#/definitions/BackupCount"
           },
           "async-backup-count": {
-            "type": "integer",
-            "minimum": 0,
-            "default": 0,
-            "description": "Number of asynchronous backups."
+            "$ref": "#/definitions/AsyncBackupCount"
           },
           "empty-queue-ttl": {
             "type": "integer",
@@ -875,14 +863,10 @@
         "additionalProperties": false,
         "properties": {
           "backup-count": {
-            "type": "integer",
-            "minimum": 0,
-            "default": 1
+            "$ref": "#/definitions/BackupCount"
           },
           "async-backup-count": {
-            "type": "integer",
-            "minimum": 0,
-            "default": 0
+            "$ref": "#/definitions/AsyncBackupCount"
           },
           "value-collection-type": {
             "enum": [
@@ -1032,18 +1016,10 @@
             "default": "BINARY"
           },
           "backup-count": {
-            "type": "integer",
-            "default": 1,
-            "minimum": 0,
-            "maximum": 6,
-            "description": "Number of synchronous backups. If it is 1, for example, then all entries of the cache are copied to one other instance as synchronous for fail-safety."
+            "$ref": "#/definitions/BackupCount"
           },
           "async-backup-count": {
-            "type": "integer",
-            "default": 0,
-            "minimum": 0,
-            "maximum": 6,
-            "description": "Number of asynchronous backups. For example, if it is 1, then all entries of the cache are copied to one other instance as asynchronous for fail-safety. The sum of \"backup-count\" and \"async-backup-count\" cannot be larger than 6"
+            "$ref": "#/definitions/AsyncBackupCount"
           },
           "eviction": {
             "$ref": "#/definitions/Eviction"
@@ -1355,6 +1331,59 @@
                 "description": " Maximum number of reentrant lock acquires. Once a caller acquires the lock this many times, it will not be able to acquire the lock again, until it makes at least one unlock() call. By default, no upper bound is set for the number of reentrant lock acquires, which means that once a caller acquires a FencedLock, all of its further lock() calls will succeed. However, for instance, if you set lock-acquire-limit to 2, once a caller acquires the lock, it will be able to acquire it once more, but its third lock() call will not succeed. If lock-acquire-limit is set to 1, then the lock becomes non-reentrant."
               }
             }
+          }
+        }
+      }
+    },
+    "BackupCount": {
+      "description": "Number of synchronous backups. For example, if 1 is set as the backup count, then all entries of the map will be copied to another JVM for fail-safety. 0 means no sync backup. The sum of backup-count and async-backup-count can't be larger than than 6.",
+      "type": "integer",
+      "minimum": 0,
+      "default": 1,
+      "maximum": 6
+    },
+    "AsyncBackupCount": {
+      "description": "The number of asynchronous backups. 0 means no backups. The sum of backup-count and async-backup-count can't be larger than than 6.",
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "maximum": 6
+    },
+    "List": {
+      "type": "object",
+      "description": "Name-value pairs of list configurations",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "statistics-enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "When you enable it, you can retrieve list statistics."
+          },
+          "max-size": {
+            "type": "integer",
+            "default": 0,
+            "description": "Maximum size of the list (item count). 0 means Integer.MAX_VALUE."
+          },
+          "backup-count": {
+            "$ref": "#/definitions/BackupCount"
+          },
+          "async-backup-count": {
+            "$ref": "#/definitions/AsyncBackupCount"
+          },
+          "item-listeners": {
+          "type": "array",
+            "items":  {
+              "$ref": "#/definitions/ItemListener"
+            }
+          },
+          "split-brain-protection-ref": {
+            "type": "string",
+            "description":  "Adds the Split Brain Protection for this data-structure. You should set this value as a \"split-brain-protection\"'s name."
+          },
+          "merge-policy": {
+            "$ref": "#/definitions/MergePolicy"
           }
         }
       }
