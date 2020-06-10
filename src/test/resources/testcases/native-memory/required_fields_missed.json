@@ -1,0 +1,66 @@
+{
+  "instance": {
+    "hazelcast": {
+      "native-memory": {
+        "enabled": true,
+        "allocator-type": "POOLED",
+        "size": {
+          "unit": "MEGABYTES",
+          "value": 512
+        },
+        "persistent-memory-directory": "/opt"
+      }
+    }
+  },
+  "error": {
+    "schemaLocation": "#/definitions/NativeMemory",
+    "pointerToViolation": "#/hazelcast/native-memory",
+    "causingExceptions": [
+      {
+        "schemaLocation": "#/definitions/NativeMemory/allOf/1",
+        "pointerToViolation": "#/hazelcast/native-memory",
+        "causingExceptions": [
+          {
+            "schemaLocation": "#/definitions/NativeMemory/allOf/1/anyOf/0",
+            "pointerToViolation": "#/hazelcast/native-memory",
+            "causingExceptions": [],
+            "keyword": "not",
+            "message": "subject must not be valid against schema {\"properties\":{\"allocator-type\":{\"const\":\"POOLED\"}}}"
+          },
+          {
+            "schemaLocation": "#/definitions/NativeMemory/allOf/1/anyOf/1",
+            "pointerToViolation": "#/hazelcast/native-memory",
+            "causingExceptions": [
+              {
+                "schemaLocation": "#/definitions/NativeMemory/allOf/1/anyOf/1",
+                "pointerToViolation": "#/hazelcast/native-memory",
+                "causingExceptions": [],
+                "keyword": "required",
+                "message": "required key [metadata-space-percentage] not found"
+              },
+              {
+                "schemaLocation": "#/definitions/NativeMemory/allOf/1/anyOf/1",
+                "pointerToViolation": "#/hazelcast/native-memory",
+                "causingExceptions": [],
+                "keyword": "required",
+                "message": "required key [min-block-size] not found"
+              },
+              {
+                "schemaLocation": "#/definitions/NativeMemory/allOf/1/anyOf/1",
+                "pointerToViolation": "#/hazelcast/native-memory",
+                "causingExceptions": [],
+                "keyword": "required",
+                "message": "required key [page-size] not found"
+              }
+            ],
+            "message": "3 schema violations found"
+          }
+        ],
+        "keyword": "anyOf",
+        "message": "#: no subschema matched out of the total 2 subschemas"
+      }
+    ],
+    "keyword": "allOf",
+    "message": "#: only 1 subschema matches out of 2"
+  }
+}
