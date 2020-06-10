@@ -1,5 +1,0 @@
-hazelcast:
-  native-memory:
-    min-block-size: 15
-    enabled: true
-    allocator-type: STANDARD
