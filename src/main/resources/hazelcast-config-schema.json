@@ -1558,6 +1558,7 @@
       }
     },
     "AdvancedNetwork": {
+      "type": "object",
       "additionalProperties": false,
       "description": "The advanced network configuration provides fine-tuning capabilities for configuring network with the ability of defining separate server sockets for different protocols, such as for member-member and member-client communication. This configuration renders exclusive or relation with the generic \"network\" configuration element.",
       "properties": {
@@ -1599,6 +1600,7 @@
                   "type": "integer",
                   "minimum": 0,
                   "maximum": 255,
+                  "default": 32,
                   "description": "Time-to-live value for multicast packets sent out to control the scope of multicasts."
                 },
                 "multicast-timeout-seconds": {
