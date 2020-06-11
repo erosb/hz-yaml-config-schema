@@ -1475,6 +1475,7 @@
             },
             "iteration-count": {
               "type": "integer",
+              "minimum": 0,
               "default": 19
             }
           }
@@ -1500,11 +1501,13 @@
             },
             "connect-timeout-seconds": {
               "type": "integer",
+              "minimum": 0,
               "default": 0,
               "description": "Specifies the TCP timeout in seconds."
             },
             "send-buffer-size-kb": {
               "type": "integer",
+              "minimum": 0,
               "default": 128,
               "description": "Specifies the size of the send buffer."
             },
@@ -1523,6 +1526,8 @@
       }
     },
     "SocketEndpointConfig": {
+      "type": "object",
+      "additionalProperties": false,
       "$ref": "#/definitions/WanEndpointConfig",
       "properties": {
         "port": {
@@ -1791,31 +1796,21 @@
           }
         },
         "member-server-socket-endpoint-config": {
-          "type": "object",
           "description": "Configures the server socket used for the member-member communication.",
-          "additionalProperties": false,
           "$ref": "#/definitions/SocketEndpointConfig"
         },
         "client-server-socket-endpoint-config": {
-          "type": "object",
           "description": "Configures the server socket used for the member-client communication.",
-          "additionalProperties": false,
           "$ref": "#/definitions/SocketEndpointConfig"
         },
         "wan-server-socket-endpoint-config": {
-          "type": "object",
           "description": "Configures the server sockets used for the WAN replication's inbound WAN connections. Multiple WAN server sockets can be configured to allow configuring separate server sockets for each inbound WAN connection.",
-          "additionalProperties": false,
           "$ref": "#/definitions/SocketEndpointConfig"
         },
         "memcache-server-socket-endpoint-config": {
-          "type": "object",
-          "additionalProperties": false,
           "$ref": "#/definitions/SocketEndpointConfig"
         },
         "rest-server-socket-endpoint-config": {
-          "type": "object",
-          "additionalProperties": false,
           "description": " Controls access to Hazelcast HTTP REST API. The methods available through REST API are grouped to several REST endpoint groups, which can be specified in this section.",
           "$ref": "#/definitions/SocketEndpointConfig",
           "properties": {
@@ -1898,8 +1893,6 @@
           "type": "object",
           "description": "This element configures socket settings for the outgoing WAN connections.",
           "additionalProperties": {
-            "type": "object",
-            "additionalProperties": false,
             "$ref": "#/definitions/WanEndpointConfig"
           }
         }
