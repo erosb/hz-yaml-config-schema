@@ -1388,6 +1388,16 @@
         }
       }
     },
+    "EndpointGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
     "WanEndpointConfig": {
       "properties": {
         "name": {
@@ -1831,59 +1841,24 @@
                   }
                 },
                 "CLUSTER_WRITE": {
-                  "type": "object",
-                  "additionalProperties": false,
                   "description": "Operations which changes cluster or node state or their configurations.",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean",
-                      "default": false
-                    }
-                  }
+                  "$ref": "#/definitions/EndpointGroup"
                 },
                 "HEALTH_CHECK": {
-                  "type": "object",
-                  "additionalProperties": false,
                   "description": "Group of endpoints for HTTP health checking.",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean",
-                      "default": false
-                    }
-                  }
+                  "$ref": "#/definitions/EndpointGroup"
                 },
                 "HOT_RESTART": {
-                  "type": "object",
-                  "additionalProperties": false,
                   "description": "Group of HTTP REST APIs related to Hot Restart feature.",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean",
-                      "default": false
-                    }
-                  }
+                  "$ref": "#/definitions/EndpointGroup"
                 },
                 "WAN": {
-                  "type": "object",
-                  "additionalProperties": false,
                   "description": "Group of HTTP REST APIs related to WAN Replication feature",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean",
-                      "default": false
-                    }
-                  }
+                  "$ref": "#/definitions/EndpointGroup"
                 },
                 "DATA": {
-                  "type": "object",
-                  "additionalProperties": false,
                   "description": "Group of HTTP REST APIs for data manipulation in the cluster (e.g. IMap and IQueue operations).",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean",
-                      "default": false
-                    }
-                  }
+                  "$ref": "#/definitions/EndpointGroup"
                 }
               }
             }
