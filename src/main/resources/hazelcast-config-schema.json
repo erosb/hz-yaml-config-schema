@@ -1683,46 +1683,82 @@
                 "SEND",
                 "NONE"
               ]
+            },
+            "all": {
+              "$ref": "#/definitions/SecurityPermission"
+            },
+            "config": {
+              "$ref": "#/definitions/SecurityPermission"
+            },
+            "transaction": {
+              "$ref": "#/definitions/SecurityPermission"
+            },
+            "sql": {
+              "$ref": "#/definitions/SecurityPermission"
             }
           },
           "additionalProperties": {
-            "name": {
-              "type": "string"
-            },
-            "principal": {
-              "type": "string"
-            },
-            "endpoints": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "actions": {
-              "type": "array",
-              "items": {
-                "enum": [
-                  "all",
-                  "create",
-                  "destroy",
-                  "put",
-                  "read",
-                  "remove",
-                  "lock",
-                  "intercept",
-                  "index",
-                  "listen",
-                  "publish",
-                  "modify",
-                  "acquire",
-                  "release",
-                  "deploy"
-                ]
-              }
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/SecurityPermission"
             }
           }
         }
       }
+    },
+    "SecurityPermission": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "principal": {
+          "type": "string"
+        },
+        "endpoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "actions": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SecurityPermissionAction"
+              }
+            },
+            {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions/SecurityPermissionAction"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "SecurityPermissionAction": {
+      "enum": [
+        "all",
+        "create",
+        "destroy",
+        "put",
+        "read",
+        "remove",
+        "lock",
+        "intercept",
+        "index",
+        "listen",
+        "publish",
+        "modify",
+        "acquire",
+        "release",
+        "deploy"
+      ]
     }
   },
   "TODO": false
