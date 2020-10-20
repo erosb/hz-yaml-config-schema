@@ -67,7 +67,7 @@
           "$ref": "#/definitions/List"
         },
         "set": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/Set"
         },
         "topic": {
           "$ref": "#/TODO"
@@ -731,6 +731,38 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Set": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "backup-count": {
+            "$ref": "#/definitions/BackupCount"
+          },
+          "async-backup-count": {
+            "$ref": "#/definitions/AsyncBackupCount"
+          },
+          "max-size": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Maximum size of the set (item count). Its default value is 0, meaning Integer.MAX_VALUE."
+          },
+          "item-listeners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ItemListener"
+            }
+          },
+          "split-brain-protection-ref": {
+            "type": "string"
+          },
+          "merge-policy": {
+            "$ref": "#/definitions/MergePolicy"
           }
         }
       }
