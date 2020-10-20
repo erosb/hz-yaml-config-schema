@@ -20,91 +20,69 @@
     "pointerToViolation": "#/hazelcast/native-memory",
     "causingExceptions": [
       {
-        "schemaLocation": "#/definitions/NativeMemory/allOf/0",
-        "pointerToViolation": "#/hazelcast/native-memory",
+        "schemaLocation": "#/definitions/NativeMemory/properties/allocator-type",
+        "pointerToViolation": "#/hazelcast/native-memory/allocator-type",
+        "causingExceptions": [],
+        "keyword": "enum",
+        "message": "FREE is not a valid enum value"
+      },
+      {
+        "schemaLocation": "#/definitions/NativeMemory/properties/enabled",
+        "pointerToViolation": "#/hazelcast/native-memory/enabled",
+        "causingExceptions": [],
+        "keyword": "type",
+        "message": "expected type: Boolean, found: Null"
+      },
+      {
+        "schemaLocation": "#/definitions/NativeMemory/properties/metadata-space-percentage",
+        "pointerToViolation": "#/hazelcast/native-memory/metadata-space-percentage",
+        "causingExceptions": [],
+        "keyword": "minimum",
+        "message": "-3 is not greater or equal to 1"
+      },
+      {
+        "schemaLocation": "#/definitions/NativeMemory/properties/min-block-size",
+        "pointerToViolation": "#/hazelcast/native-memory/min-block-size",
         "causingExceptions": [
           {
-            "schemaLocation": "#/definitions/NativeMemory/allOf/0/properties/allocator-type",
-            "pointerToViolation": "#/hazelcast/native-memory/allocator-type",
-            "causingExceptions": [
-              {
-                "pointerToViolation": "#/hazelcast/native-memory/allocator-type",
-                "causingExceptions": [],
-                "keyword": "enum",
-                "message": "FREE is not a valid enum value"
-              }
-            ],
-            "keyword": "allOf",
-            "message": "#: only 1 subschema matches out of 2"
-          },
-          {
-            "schemaLocation": "#/definitions/NativeMemory/allOf/0/properties/enabled",
-            "pointerToViolation": "#/hazelcast/native-memory/enabled",
-            "causingExceptions": [],
-            "keyword": "type",
-            "message": "expected type: Boolean, found: Null"
-          },
-          {
-            "schemaLocation": "#/definitions/NativeMemory/allOf/0/properties/metadata-space-percentage",
-            "pointerToViolation": "#/hazelcast/native-memory/metadata-space-percentage",
-            "causingExceptions": [],
-            "keyword": "minimum",
-            "message": "-3 is not greater or equal to 1"
-          },
-          {
-            "schemaLocation": "#/definitions/NativeMemory/allOf/0/properties/min-block-size",
             "pointerToViolation": "#/hazelcast/native-memory/min-block-size",
-            "causingExceptions": [
-              {
-                "pointerToViolation": "#/hazelcast/native-memory/min-block-size",
-                "causingExceptions": [],
-                "keyword": "enum",
-                "message": "15 is not a valid enum value"
-              }
-            ],
-            "keyword": "allOf",
-            "message": "#: only 1 subschema matches out of 2"
+            "causingExceptions": [],
+            "keyword": "enum",
+            "message": "15 is not a valid enum value"
+          }
+        ],
+        "keyword": "allOf",
+        "message": "#: only 1 subschema matches out of 2"
+      },
+      {
+        "schemaLocation": "#/definitions/NativeMemory/properties/page-size",
+        "pointerToViolation": "#/hazelcast/native-memory/page-size",
+        "causingExceptions": [],
+        "keyword": "minimum",
+        "message": "0 is not greater or equal to 1"
+      },
+      {
+        "schemaLocation": "#/definitions/NativeMemory/properties/size",
+        "pointerToViolation": "#/hazelcast/native-memory/size",
+        "causingExceptions": [
+          {
+            "schemaLocation": "#/definitions/NativeMemory/properties/size/properties/unit",
+            "pointerToViolation": "#/hazelcast/native-memory/size/unit",
+            "causingExceptions": [],
+            "keyword": "enum",
+            "message": "TERABYTES is not a valid enum value"
           },
           {
-            "schemaLocation": "#/definitions/NativeMemory/allOf/0/properties/page-size",
-            "pointerToViolation": "#/hazelcast/native-memory/page-size",
+            "schemaLocation": "#/definitions/NativeMemory/properties/size/properties/value",
+            "pointerToViolation": "#/hazelcast/native-memory/size/value",
             "causingExceptions": [],
             "keyword": "minimum",
             "message": "0 is not greater or equal to 1"
-          },
-          {
-            "schemaLocation": "#/definitions/NativeMemory/allOf/0/properties/size",
-            "pointerToViolation": "#/hazelcast/native-memory/size",
-            "causingExceptions": [
-              {
-                "schemaLocation": "#/definitions/NativeMemory/allOf/0/properties/size/properties/unit",
-                "pointerToViolation": "#/hazelcast/native-memory/size/unit",
-                "causingExceptions": [
-                  {
-                    "pointerToViolation": "#/hazelcast/native-memory/size/unit",
-                    "causingExceptions": [],
-                    "keyword": "enum",
-                    "message": "TERABYTES is not a valid enum value"
-                  }
-                ],
-                "keyword": "allOf",
-                "message": "#: only 1 subschema matches out of 2"
-              },
-              {
-                "schemaLocation": "#/definitions/NativeMemory/allOf/0/properties/size/properties/value",
-                "pointerToViolation": "#/hazelcast/native-memory/size/value",
-                "causingExceptions": [],
-                "keyword": "minimum",
-                "message": "0 is not greater or equal to 1"
-              }
-            ],
-            "message": "2 schema violations found"
           }
         ],
-        "message": "7 schema violations found"
+        "message": "2 schema violations found"
       }
     ],
-    "keyword": "allOf",
-    "message": "#: only 1 subschema matches out of 2"
+    "message": "7 schema violations found"
   }
 }
