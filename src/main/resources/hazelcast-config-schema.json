@@ -73,7 +73,7 @@
           "$ref": "#/definitions/Topic"
         },
         "reliable-topic": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/ReliableTopic"
         },
         "ringbuffer": {
           "$ref": "#/TODO"
@@ -735,6 +735,28 @@
         }
       }
     },
+    "EntryListener": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "class-name": {
+          "type": "string"
+        },
+        "include-value": {
+          "type": "boolean",
+          "default": false,
+          "description": "True if you want the entry event to contain the item values."
+        },
+        "local": {
+          "type": "boolean",
+          "default": false,
+          "description": "True if you want to listen to the entries on the local member."
+        }
+      },
+      "required": [
+        "class-name"
+      ]
+    },
     "Set": {
       "type": "object",
       "additionalProperties": {
@@ -778,7 +800,7 @@
             "default": false,
             "description": "When it is set to true, all cluster members that listen to a topic will receive the messages in the same order they were published by all members. This way, Hazelcast guarantees that all members will see the in the same order. Its default value is false."
           },
-          "statistics-enabled":  {
+          "statistics-enabled": {
             "type": "boolean",
             "default": "true",
             "description": "When you enable it, you can retrieve topic statistics such as total number of published and received messages. Its default value is true."
@@ -786,11 +808,11 @@
           "multi-threading-enabled": {
             "type": "boolean",
             "default": false,
-            "description":  "Enable multi-threaded message handling. When enabled any thread from events thread pool can be used for incoming message processing. Otherwise only one dedicated thread will be used to handle topic messages. Note: it can be enabled only in case when global ordering is disabled. Moreover, the local message ordering is not supported in this mode also. This means the messages produced by local publisher can be processed by several threads with no ordering guarantee."
+            "description": "Enable multi-threaded message handling. When enabled any thread from events thread pool can be used for incoming message processing. Otherwise only one dedicated thread will be used to handle topic messages. Note: it can be enabled only in case when global ordering is disabled. Moreover, the local message ordering is not supported in this mode also. This means the messages produced by local publisher can be processed by several threads with no ordering guarantee."
           },
           "message-listeners": {
             "type": "array",
-            "items":  {
+            "items": {
               "type": "string"
             }
           }
@@ -800,34 +822,48 @@
             "global-ordering-enabled": {
               "const": true
             },
-            "multi-threading-enabled":  {
+            "multi-threading-enabled": {
               "const": true
             }
           }
         }
       }
     },
-    "EntryListener": {
+    "ReliableTopic": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "class-name": {
-          "type": "string"
-        },
-        "include-value": {
-          "type": "boolean",
-          "default": false,
-          "description": "True if you want the entry event to contain the item values."
-        },
-        "local": {
-          "type": "boolean",
-          "default": false,
-          "description": "True if you want to listen to the entries on the local member."
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "statistics-enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enables or disables statistics for this reliable topic. Collects the creation time, total number of published and received messages for each member locally."
+          },
+          "topic-overload-policy": {
+            "enum": [
+              "DISCARD_OLDEST",
+              "DISCARD_NEWEST",
+              "BLOCK",
+              "ERROR"
+            ],
+            "default": "BLOCK",
+            "description": "A policy to deal with an overloaded topic; so topic where there is no place to store new messages. This policy can only be used in combination with the com.hazelcast.core.HazelcastInstance#getReliableTopic(String). The reliable topic uses a com.hazelcast.ringbuffer.Ringbuffer to store the messages. A ringbuffer doesn't track where readers are, so it has no concept of a slow consumers. This provides many advantages like high performance reads, but it also gives the ability to the reader to re-read the same message multiple times in case of an error. A ringbuffer has a limited, fixed capacity. A fast producer may overwrite old messages that are still being read by a slow consumer. To prevent this, we may configure a time-to-live on the ringbuffer (see com.hazelcast.config.RingbufferConfig#setTimeToLiveSeconds(int). Once the time-to-live is configured, the TopicOverloadPolicy controls how the publisher is going to deal with the situation that a ringbuffer is full and the oldest item in the ringbuffer is not old enough to get overwritten. Keep in mind that this retention period (time-to-live) can keep messages from being overwritten, even though all readers might have already completed reading. Its default value is BLOCK. Available values are as follows: - DISCARD_OLDEST: Using this policy, a message that has not expired can be overwritten. No matter the retention period set, the overwrite will just overwrite the item. This can be a problem for slow consumers because they were promised a certain time window to process messages. But it will benefit producers and fast consumers since they are able to continue. This policy sacrifices the slow producer in favor of fast producers/consumers. - DISCARD_NEWEST: Message that was to be published is discarded. - BLOCK: The caller will wait until there is space in the Ringbuffer. - ERROR: The publish call fails immediately. "
+          },
+          "read-batch-size": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "description": "Sets the read batch size. The ReliableTopic tries to read a batch of messages from the ringbuffer. It will get at least one, but if there are more available, then it will try to get more to increase throughput. The maximum read batch size can be influenced using the read batch size. Apart from influencing the number of messages to retrieve, the readBatchSize also determines how many messages will be processed by the thread running the MessageListener before it returns back to the pool to look for other MessageListeners that need to be processed. The problem with returning to the pool and looking for new work is that interacting with an executor is quite expensive due to contention on the work-queue. The more work that can be done without retuning to the pool, the smaller the overhead. If the readBatchSize is 10 and there are 50 messages available, 10 items are retrieved and processed consecutively before the thread goes back to the pool and helps out with the processing of other messages. If the readBatchSize is 10 and there are 2 items available, 2 items are retrieved and processed consecutively. If the readBatchSize is an issue because a thread will be busy too long with processing a single MessageListener and it can't help out other MessageListeners, increase the size of the threadpool so the other MessageListeners don't need to wait for a thread, but can be processed in parallel. "
+          },
+          "message-listeners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "required": [
-        "class-name"
-      ]
+      }
     },
     "Queue": {
       "type": "object",
