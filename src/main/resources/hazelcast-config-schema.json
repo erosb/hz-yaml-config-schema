@@ -79,7 +79,7 @@
           "$ref": "#/definitions/Ringbuffer"
         },
         "flake-id-generator": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/FlakeIdGenerator"
         },
         "listeners": {
           "$ref": "#/TODO"
@@ -906,6 +906,64 @@
           },
           "merge-policy": {
             "$ref": "#/definitions/MergePolicy"
+          }
+        }
+      }
+    },
+    "FlakeIdGenerator": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "prefetch-count": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 100000,
+            "description": "Sets how many IDs are pre-fetched on the background when one call to FlakeIdGenerator.newId() is made. Value must be in the range 1..100,000. This setting pertains only to newId() calls made on the member that configured it."
+          },
+          "prefetch-validity-millis": {
+            "type": "integer",
+            "default": 600000,
+            "minimum": 0,
+            "description": "Sets for how long the pre-fetched IDs can be used. If this time elapses, a new batch of IDs will be fetched. Time unit is milliseconds, default is 10 minutes. The IDs contain timestamp component, which ensures rough global ordering of IDs. If an ID is assigned to an object that was created much later, it will be much out of order. If you don't care about ordering, set this value to 0. This setting pertains only to newId() calls made on the member that configured it."
+          },
+          "epoch-start": {
+            "description": "Sets the offset of timestamp component. Time unit is milliseconds, default is 1.1.2018 0:00 UTC. If you set the epoch start to a future instant, negative IDs will be generated until that time occurs.",
+            "type": "integer",
+            "default": 1514764800000
+          },
+          "node-id-offset": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "Sets the offset that will be added to the node ID assigned to cluster member for this generator. Might be useful in A/B deployment scenarios where you have cluster A which you want to upgrade. You create cluster B and for some time both will generate IDs and you want to have them unique. In this case, configure node ID offset for generators on cluster B."
+          },
+          "bits-sequence": {
+            "type": "integer",
+            "default": 6,
+            "minimum": 0,
+            "maximum": 63,
+            "description": "Sets the bit-length of the sequence component"
+          },
+          "bits-node-id": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 63,
+            "default": 16,
+            "description": "Sets the bit-length of node id component."
+          },
+          "allowed-future-millis": {
+            "type": "integer",
+            "default": 15000,
+            "minimum": 0,
+            "description": "Sets how far to the future is the generator allowed to go to generate IDs without blocking."
+          },
+          "statistics-enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "When you enable it, you can retrieve the Flake ID generators statistics."
           }
         }
       }
