@@ -70,7 +70,7 @@
           "$ref": "#/definitions/Set"
         },
         "topic": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/Topic"
         },
         "reliable-topic": {
           "$ref": "#/TODO"
@@ -763,6 +763,46 @@
           },
           "merge-policy": {
             "$ref": "#/definitions/MergePolicy"
+          }
+        }
+      }
+    },
+    "Topic": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "global-ordering-enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "When it is set to true, all cluster members that listen to a topic will receive the messages in the same order they were published by all members. This way, Hazelcast guarantees that all members will see the in the same order. Its default value is false."
+          },
+          "statistics-enabled":  {
+            "type": "boolean",
+            "default": "true",
+            "description": "When you enable it, you can retrieve topic statistics such as total number of published and received messages. Its default value is true."
+          },
+          "multi-threading-enabled": {
+            "type": "boolean",
+            "default": false,
+            "description":  "Enable multi-threaded message handling. When enabled any thread from events thread pool can be used for incoming message processing. Otherwise only one dedicated thread will be used to handle topic messages. Note: it can be enabled only in case when global ordering is disabled. Moreover, the local message ordering is not supported in this mode also. This means the messages produced by local publisher can be processed by several threads with no ordering guarantee."
+          },
+          "message-listeners": {
+            "type": "array",
+            "items":  {
+              "type": "string"
+            }
+          }
+        },
+        "not": {
+          "properties": {
+            "global-ordering-enabled": {
+              "const": true
+            },
+            "multi-threading-enabled":  {
+              "const": true
+            }
           }
         }
       }
