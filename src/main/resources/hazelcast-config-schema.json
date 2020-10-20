@@ -76,7 +76,7 @@
           "$ref": "#/definitions/ReliableTopic"
         },
         "ringbuffer": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/Ringbuffer"
         },
         "flake-id-generator": {
           "$ref": "#/TODO"
@@ -861,6 +861,51 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      }
+    },
+    "Ringbuffer": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "capacity": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 10000,
+            "description": "Number of items in the Ringbuffer. If no \"time-to-live-seconds\" is set, this value will always be equal to the capacity after the head completes the first loop around the ring. This is because no items are being expired."
+          },
+          "time-to-live-seconds": {
+            "type": "integer",
+            "default": 0,
+            "description": "Sets the time to live in seconds which is the maximum number of seconds for each item to stay in the ringbuffer before being removed. Entries that are older than time-to-live-seconds are removed from the ringbuffer on the next ringbuffer operation (read or write). Time to live can be disabled by setting time-to-live-seconds to 0. It means that items won't get removed because they expire. They may only be overwritten. When time-to-live-seconds is disabled and after the tail does a full loop in the ring, the ringbuffer size will always be equal to the capacity. The time-to-live-seconds can be any integer between 0 and Integer#MAX_VALUE. 0 means infinite. The default is 0. "
+          },
+          "backup-count": {
+            "$ref": "#/definitions/BackupCount"
+          },
+          "async-backup-count": {
+            "$ref": "#/definitions/AsyncBackupCount"
+          },
+          "in-memory-format": {
+            "enum": [
+              "OBJECT",
+              "BINARY"
+            ],
+            "default": "BINARY",
+            "description": "Sets the in-memory format. Setting the in-memory format controls the format of the stored item in the ringbuffer: - OBJECT: the item is stored in deserialized format (a regular object) - BINARY (default): the item is stored in serialized format (a binary blob) The object in-memory format is useful when: - the object stored in object format has a smaller footprint than in binary format - if there are readers using a filter. Since for every filter invocation, the object needs to be available in object format."
+          },
+          "ringbuffer-store": {
+            "$ref": "#/definitions/ClassNameWithProps",
+            "description": "Includes the Ringbuffer store factory class name and property configurations. The store format is the same as the in-memory-format for the Ringbuffer."
+          },
+          "split-brain-protection-ref": {
+            "type": "string",
+            "description": "Adds the Split Brain Protection for this data-structure which you configure using the \"split-brain-protection\" element. You should set the \"split-brain-protection-ref\"'s value as the \"split-brain-protection\"'s name."
+          },
+          "merge-policy": {
+            "$ref": "#/definitions/MergePolicy"
           }
         }
       }
