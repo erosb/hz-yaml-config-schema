@@ -70,16 +70,16 @@
           "$ref": "#/definitions/Set"
         },
         "topic": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/Topic"
         },
         "reliable-topic": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/ReliableTopic"
         },
         "ringbuffer": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/Ringbuffer"
         },
         "flake-id-generator": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/FlakeIdGenerator"
         },
         "listeners": {
           "$ref": "#/TODO"
@@ -735,6 +735,28 @@
         }
       }
     },
+    "EntryListener": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "class-name": {
+          "type": "string"
+        },
+        "include-value": {
+          "type": "boolean",
+          "default": false,
+          "description": "True if you want the entry event to contain the item values."
+        },
+        "local": {
+          "type": "boolean",
+          "default": false,
+          "description": "True if you want to listen to the entries on the local member."
+        }
+      },
+      "required": [
+        "class-name"
+      ]
+    },
     "Set": {
       "type": "object",
       "additionalProperties": {
@@ -767,27 +789,184 @@
         }
       }
     },
-    "EntryListener": {
+    "Topic": {
       "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "class-name": {
-          "type": "string"
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "global-ordering-enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "When it is set to true, all cluster members that listen to a topic will receive the messages in the same order they were published by all members. This way, Hazelcast guarantees that all members will see the in the same order. Its default value is false."
+          },
+          "statistics-enabled": {
+            "type": "boolean",
+            "default": "true",
+            "description": "When you enable it, you can retrieve topic statistics such as total number of published and received messages. Its default value is true."
+          },
+          "multi-threading-enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable multi-threaded message handling. When enabled any thread from events thread pool can be used for incoming message processing. Otherwise only one dedicated thread will be used to handle topic messages. Note: it can be enabled only in case when global ordering is disabled. Moreover, the local message ordering is not supported in this mode also. This means the messages produced by local publisher can be processed by several threads with no ordering guarantee."
+          },
+          "message-listeners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         },
-        "include-value": {
-          "type": "boolean",
-          "default": false,
-          "description": "True if you want the entry event to contain the item values."
-        },
-        "local": {
-          "type": "boolean",
-          "default": false,
-          "description": "True if you want to listen to the entries on the local member."
+        "not": {
+          "properties": {
+            "global-ordering-enabled": {
+              "const": true
+            },
+            "multi-threading-enabled": {
+              "const": true
+            }
+          }
         }
-      },
-      "required": [
-        "class-name"
-      ]
+      }
+    },
+    "ReliableTopic": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "statistics-enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enables or disables statistics for this reliable topic. Collects the creation time, total number of published and received messages for each member locally."
+          },
+          "topic-overload-policy": {
+            "enum": [
+              "DISCARD_OLDEST",
+              "DISCARD_NEWEST",
+              "BLOCK",
+              "ERROR"
+            ],
+            "default": "BLOCK",
+            "description": "A policy to deal with an overloaded topic; so topic where there is no place to store new messages. This policy can only be used in combination with the com.hazelcast.core.HazelcastInstance#getReliableTopic(String). The reliable topic uses a com.hazelcast.ringbuffer.Ringbuffer to store the messages. A ringbuffer doesn't track where readers are, so it has no concept of a slow consumers. This provides many advantages like high performance reads, but it also gives the ability to the reader to re-read the same message multiple times in case of an error. A ringbuffer has a limited, fixed capacity. A fast producer may overwrite old messages that are still being read by a slow consumer. To prevent this, we may configure a time-to-live on the ringbuffer (see com.hazelcast.config.RingbufferConfig#setTimeToLiveSeconds(int). Once the time-to-live is configured, the TopicOverloadPolicy controls how the publisher is going to deal with the situation that a ringbuffer is full and the oldest item in the ringbuffer is not old enough to get overwritten. Keep in mind that this retention period (time-to-live) can keep messages from being overwritten, even though all readers might have already completed reading. Its default value is BLOCK. Available values are as follows: - DISCARD_OLDEST: Using this policy, a message that has not expired can be overwritten. No matter the retention period set, the overwrite will just overwrite the item. This can be a problem for slow consumers because they were promised a certain time window to process messages. But it will benefit producers and fast consumers since they are able to continue. This policy sacrifices the slow producer in favor of fast producers/consumers. - DISCARD_NEWEST: Message that was to be published is discarded. - BLOCK: The caller will wait until there is space in the Ringbuffer. - ERROR: The publish call fails immediately. "
+          },
+          "read-batch-size": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "description": "Sets the read batch size. The ReliableTopic tries to read a batch of messages from the ringbuffer. It will get at least one, but if there are more available, then it will try to get more to increase throughput. The maximum read batch size can be influenced using the read batch size. Apart from influencing the number of messages to retrieve, the readBatchSize also determines how many messages will be processed by the thread running the MessageListener before it returns back to the pool to look for other MessageListeners that need to be processed. The problem with returning to the pool and looking for new work is that interacting with an executor is quite expensive due to contention on the work-queue. The more work that can be done without retuning to the pool, the smaller the overhead. If the readBatchSize is 10 and there are 50 messages available, 10 items are retrieved and processed consecutively before the thread goes back to the pool and helps out with the processing of other messages. If the readBatchSize is 10 and there are 2 items available, 2 items are retrieved and processed consecutively. If the readBatchSize is an issue because a thread will be busy too long with processing a single MessageListener and it can't help out other MessageListeners, increase the size of the threadpool so the other MessageListeners don't need to wait for a thread, but can be processed in parallel. "
+          },
+          "message-listeners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "Ringbuffer": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "capacity": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 10000,
+            "description": "Number of items in the Ringbuffer. If no \"time-to-live-seconds\" is set, this value will always be equal to the capacity after the head completes the first loop around the ring. This is because no items are being expired."
+          },
+          "time-to-live-seconds": {
+            "type": "integer",
+            "default": 0,
+            "description": "Sets the time to live in seconds which is the maximum number of seconds for each item to stay in the ringbuffer before being removed. Entries that are older than time-to-live-seconds are removed from the ringbuffer on the next ringbuffer operation (read or write). Time to live can be disabled by setting time-to-live-seconds to 0. It means that items won't get removed because they expire. They may only be overwritten. When time-to-live-seconds is disabled and after the tail does a full loop in the ring, the ringbuffer size will always be equal to the capacity. The time-to-live-seconds can be any integer between 0 and Integer#MAX_VALUE. 0 means infinite. The default is 0. "
+          },
+          "backup-count": {
+            "$ref": "#/definitions/BackupCount"
+          },
+          "async-backup-count": {
+            "$ref": "#/definitions/AsyncBackupCount"
+          },
+          "in-memory-format": {
+            "enum": [
+              "OBJECT",
+              "BINARY"
+            ],
+            "default": "BINARY",
+            "description": "Sets the in-memory format. Setting the in-memory format controls the format of the stored item in the ringbuffer: - OBJECT: the item is stored in deserialized format (a regular object) - BINARY (default): the item is stored in serialized format (a binary blob) The object in-memory format is useful when: - the object stored in object format has a smaller footprint than in binary format - if there are readers using a filter. Since for every filter invocation, the object needs to be available in object format."
+          },
+          "ringbuffer-store": {
+            "$ref": "#/definitions/ClassNameWithProps",
+            "description": "Includes the Ringbuffer store factory class name and property configurations. The store format is the same as the in-memory-format for the Ringbuffer."
+          },
+          "split-brain-protection-ref": {
+            "type": "string",
+            "description": "Adds the Split Brain Protection for this data-structure which you configure using the \"split-brain-protection\" element. You should set the \"split-brain-protection-ref\"'s value as the \"split-brain-protection\"'s name."
+          },
+          "merge-policy": {
+            "$ref": "#/definitions/MergePolicy"
+          }
+        }
+      }
+    },
+    "FlakeIdGenerator": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "prefetch-count": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 100000,
+            "description": "Sets how many IDs are pre-fetched on the background when one call to FlakeIdGenerator.newId() is made. Value must be in the range 1..100,000. This setting pertains only to newId() calls made on the member that configured it."
+          },
+          "prefetch-validity-millis": {
+            "type": "integer",
+            "default": 600000,
+            "minimum": 0,
+            "description": "Sets for how long the pre-fetched IDs can be used. If this time elapses, a new batch of IDs will be fetched. Time unit is milliseconds, default is 10 minutes. The IDs contain timestamp component, which ensures rough global ordering of IDs. If an ID is assigned to an object that was created much later, it will be much out of order. If you don't care about ordering, set this value to 0. This setting pertains only to newId() calls made on the member that configured it."
+          },
+          "epoch-start": {
+            "description": "Sets the offset of timestamp component. Time unit is milliseconds, default is 1.1.2018 0:00 UTC. If you set the epoch start to a future instant, negative IDs will be generated until that time occurs.",
+            "type": "integer",
+            "default": 1514764800000
+          },
+          "node-id-offset": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "Sets the offset that will be added to the node ID assigned to cluster member for this generator. Might be useful in A/B deployment scenarios where you have cluster A which you want to upgrade. You create cluster B and for some time both will generate IDs and you want to have them unique. In this case, configure node ID offset for generators on cluster B."
+          },
+          "bits-sequence": {
+            "type": "integer",
+            "default": 6,
+            "minimum": 0,
+            "maximum": 63,
+            "description": "Sets the bit-length of the sequence component"
+          },
+          "bits-node-id": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 63,
+            "default": 16,
+            "description": "Sets the bit-length of node id component."
+          },
+          "allowed-future-millis": {
+            "type": "integer",
+            "default": 15000,
+            "minimum": 0,
+            "description": "Sets how far to the future is the generator allowed to go to generate IDs without blocking."
+          },
+          "statistics-enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "When you enable it, you can retrieve the Flake ID generators statistics."
+          }
+        }
+      }
     },
     "Queue": {
       "type": "object",
