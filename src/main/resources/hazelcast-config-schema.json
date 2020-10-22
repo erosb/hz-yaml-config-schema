@@ -164,6 +164,7 @@
       "additionalProperties": false,
       "properties": {
         "scripting-enabled": {
+          "description": "Set to true to allow scripting on the member, false to disallow.",
           "type": "boolean",
           "default": false
         },
@@ -2058,15 +2059,16 @@
       "additionalProperties": false,
       "properties": {
         "max-concurrent-replication-targets": {
-          "description": "The maximum number of target members that we replicate the CRDT states to in one period.",
+          "description": "The maximum number of target members that we replicate the CRDT states to in one period. \\n A higher count will lead to states being disseminated more rapidly at the expense of burst-like behaviour - \\n one update to a CRDT will lead to a sudden burst in the number of replication messages in a short time interval.",
           "type": "integer",
-          "minimum": 1
+          "minimum": 1,
+          "default": 1
         },
         "replication-period-millis": {
-          "description": "The period between two replications of CRDT states in milliseconds.",
+          "description": "The period between two replications of CRDT states in milliseconds. \\n A lower value will increase the speed at which changes are disseminated to other cluster members at the expense of burst-like behaviour - \\n less updates will be batched together in one replication message and \\n one update to a CRDT may cause a sudden burst of replication messages in a short time interval. \\n The value must be a positive non-null integer.",
           "type": "integer",
-          "minLength": 1,
-          "minimum": 1
+          "minimum": 1,
+          "default": 1000
         }
       }
     },
