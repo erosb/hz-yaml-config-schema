@@ -1,6 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-06/schema",
   "type": "object",
+  "additionalProperties": false,
   "properties": {
     "hazelcast": {
       "type": "object",
@@ -25,6 +26,7 @@
           "$ref": "#/definitions/ManagementCenter"
         },
         "properties": {
+          "description": "The \"properties\" mapping lets you add properties to some of the Hazelcast elements used to configure some of the Hazelcast modules. You can define the name and value of these properties. You can use \"properties\" for the following Hazelcast configuration elements: \\n * discovery-strategy \\n * map-store \\n * queue-store \\n * wan-replication \\n * ssl \\n * service \\n * login-module \\n * security-object \\n * socket-interceptor ",
           "type": "object"
         },
         "wan-replication": {
@@ -85,7 +87,7 @@
           "$ref": "#/definitions/Listeners"
         },
         "serialization": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/Serialization"
         },
         "native-memory": {
           "$ref": "#/definitions/NativeMemory"
@@ -2070,7 +2072,163 @@
           },
           "value": true
         },
-        "required":  ["value"]
+        "required": [
+          "value"
+        ]
+      }
+    },
+    "Serialization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "portable-version": {
+          "type": "integer",
+          "description": "Version of the portable serialization. Portable version is used to differentiate two of the same classes that have changes such as a new field or a new field type."
+        },
+        "use-native-byte-order": {
+          "type": "boolean",
+          "description": "Set as true if you want to use the native byte order of the underlying platform.",
+          "default": false
+        },
+        "byte-order": {
+          "enum": [
+            "BIG_ENDIAN",
+            "LITTLE_ENDIAN"
+          ],
+          "description": "Specifies the byte order that the serialization will use.",
+          "default": "BIG_ENDIAN"
+        },
+        "enable-compression": {
+          "type": "boolean",
+          "default": false,
+          "description": "Set as true to enable compression when default Java serialization is used. Its default value is false."
+        },
+        "enable-shared-object": {
+          "type": "boolean",
+          "default": false,
+          "description": "Set as true to enable shared object when default Java serialization is used."
+        },
+        "allow-unsafe": {
+          "type": "boolean",
+          "default": false,
+          "description": "Set as true to allow the usage of unsafe."
+        },
+        "data-serializable-factories": {
+          "description": "Lists your class implementations of Hazelcast's DataSerializableFactory. Each factory has the required",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ClassWithFactoryId"
+          }
+        },
+        "portable-factories": {
+          "description": "Lists your class implementations of Hazelcast's PortableFactory. Each factory has the required \"factory-id\" attribute that you should give as the ID of your factory.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ClassWithFactoryId"
+          }
+        },
+        "global-serializer": {
+          "description": "Global serializer should be defined with \"global-serializer\" element. It has an optional boolean \"override-java-serialization\" attribute. If you set it as true, the Java serialization step will be handled by the global serializer, not by the Java Serializable or Externalizable",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "class-name": {
+              "type": "string"
+            },
+            "override-java-serialization": {
+              "type": "boolean",
+              "default": false,
+              "description": "If you set it as true, the Java serialization step will be handled by the global serializer, not by the Java Serializable or Externalizable"
+            }
+          },
+          "required": [
+            "class-name"
+          ]
+        },
+        "serializers": {
+          "description": "Lists the serializers (classes) that you implement using Hazelcast's StreamSerializer, ByteArraySerializer etc.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type-class": {
+                "type": "string",
+                "description": "The type of the class that will be serialized via this implementation."
+              },
+              "class-name": {
+                "type": "string",
+                "description": "The class name of the serializer implementation."
+              }
+            },
+            "required": [
+              "type-class",
+              "class-name"
+            ]
+          }
+        },
+        "check-class-def-errors": {
+          "type": "boolean",
+          "default": true,
+          "description": "If set to true, serialization system will check the class definitions error at the start of serialization process and throw a Serialization Exception with the error definition.s"
+        },
+        "java-serialization-filter": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Allows to configure blacklisting and whitelisting for deserialized classes when Java serialization is used.",
+          "properties": {
+            "defaults-disabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "whitelist": {
+              "$ref": "#/definitions/ClassFilter"
+            },
+            "blacklist": {
+              "$ref": "#/definitions/ClassFilter"
+            }
+          }
+        }
+      }
+    },
+    "ClassWithFactoryId": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "factory-id": {
+          "type": "integer"
+        },
+        "class-name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "factory-id",
+        "class-name"
+      ]
+    },
+    "ClassFilter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "class": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "package": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prefix": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     }
   },
