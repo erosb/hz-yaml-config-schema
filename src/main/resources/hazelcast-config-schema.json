@@ -82,7 +82,7 @@
           "$ref": "#/definitions/FlakeIdGenerator"
         },
         "listeners": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/Listeners"
         },
         "serialization": {
           "$ref": "#/TODO"
@@ -94,7 +94,7 @@
           "$ref": "#/definitions/Security"
         },
         "member-attributes": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/MemberAttributes"
         },
         "split-brain-protection": {
           "$ref": "#/TODO"
@@ -2095,6 +2095,27 @@
             "default": true
           }
         }
+      }
+    },
+    "Listeners": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Configuration used to register the listeners that you created by implementing Hazelcast's MembershipListener, DistributedObjectListener, MigrationListener and PartitionLostListener interfaces."
+    },
+    "MemberAttributes": {
+      "type": "object",
+      "description": "You can define member attributes for your Hazelcast members to tag your members according to your business logic requirements. Configuration element's name is \"member-attributes\". You can list each member attribute by their name. For each attribute, you need to provide its type and value.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "value": true
+        },
+        "required":  ["value"]
       }
     }
   },
