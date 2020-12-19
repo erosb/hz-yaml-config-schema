@@ -99,7 +99,7 @@
           "$ref": "#/definitions/MemberAttributes"
         },
         "split-brain-protection": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/SplitBrainProtection"
         },
         "lite-member": {
           "$ref": "#/definitions/LiteMember"
@@ -2272,6 +2272,41 @@
           "type": "array",
           "items": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "SplitBrainProtection": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Specifies whether this split brain protection is enabled."
+          },
+          "minimum-cluster-size": {
+            "type": "integer",
+            "minimum": 2,
+            "description": "The minimum number of members required in a cluster for the cluster to remain in an operational state. If the number of members is below the defined minimum at any time, the operations are rejected and the rejected operations return a SplitBrainProtectionException to their callers."
+          },
+          "protect-on": {
+            "enum": ["READ", "WRITE", "READ_WRITE"],
+            "default":  "READ_WRITE",
+            "description": "Specifies for which operations the split brain protection will be applied. Available values are READ, WRITE and READ_WRITE."
+          },
+          "function-class-name":  {
+            "type": "string",
+            "description": "Name of the class that you develop by implementing Hazelcast's SplitBrainProtectionFunction interface to conclude the absence/presence of your split brain protection. This function is triggered when any change happens to the member list."
+          },
+          "listeners": {
+            "type": "array",
+            "description": "Provides the list of split brain protection listeners that you can register to be notified about split brain protection results. Split brain protection listeners are local to the member that they are registered, so they receive only events occurred on that local member.",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
