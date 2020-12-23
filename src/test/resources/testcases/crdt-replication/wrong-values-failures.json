@@ -21,16 +21,9 @@
       {
         "schemaLocation": "#/definitions/CrdtReplication/properties/replication-period-millis",
         "pointerToViolation": "#/hazelcast/crdt-replication/replication-period-millis",
-        "causingExceptions": [
-          {
-            "pointerToViolation": "#/hazelcast/crdt-replication/replication-period-millis",
-            "causingExceptions": [],
-            "keyword": "minimum",
-            "message": "-1 is not greater or equal to 1"
-          }
-        ],
-        "keyword": "allOf",
-        "message": "#: only 1 subschema matches out of 2"
+        "causingExceptions": [],
+        "keyword": "minimum",
+        "message": "-1 is not greater or equal to 1"
       }
     ],
     "message": "2 schema violations found"
