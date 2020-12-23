@@ -187,7 +187,7 @@
         "multicast": {
           "type": "object",
           "additionalProperties": false,
-          "description": "Set its \"enabled\" attribute to true for discovery by multicast. It has another attribute (\"loopbackModeEnabled\") which enables or disables the loopback mode in the multicast discovery mechanism. "
+          "description": "Set its \"enabled\" attribute to true for discovery by multicast. It has another attribute (\"loopbackModeEnabled\") which enables or disables the loopback mode in the multicast discovery mechanism. ",
           "properties": {
             "enabled": {
               "type": "boolean",
@@ -356,7 +356,7 @@
                 }
               }
             }
-          },
+          }
         }
       }
     },
@@ -2650,7 +2650,11 @@
                           "description": "Interval (in seconds) for polling for changes in the KeyStore. 0 (default) means no polling"
                         }
                       },
-                      "required": ["path", "password", "current-key-alias"]
+                      "required": [
+                        "path",
+                        "password",
+                        "current-key-alias"
+                      ]
                     }
                   }
                 },
@@ -2682,13 +2686,15 @@
                           "properties": {
                             "enabled": {
                               "type": "boolean",
-                              "default": false,
+                              "default": false
                             },
-                            "factory-class-name":  {
+                            "factory-class-name": {
                               "type": "string",
-                              "examples": ["com.hazelcast.nio.ssl.BasicSSLContextFactory"]
+                              "examples": [
+                                "com.hazelcast.nio.ssl.BasicSSLContextFactory"
+                              ]
                             },
-                            "properties":  {
+                            "properties": {
                               "type": "object",
                               "examples": [
                                 {
