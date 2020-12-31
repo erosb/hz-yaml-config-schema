@@ -486,6 +486,104 @@
               }
             }
           }
+        },
+        "interfaces": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "You need to set it to true to be able to use your defined interfaces."
+            },
+            "interfaces": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "You can define multiple interfaces. By default, it is disabled."
+        },
+        "memcache-protocol": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "description": "Allows to configure Memcache text protocol support in Hazelcast."
+        },
+        "ssl": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Lets you configure SSL using the SSL context factory. This feature is available only in Hazelcast Enterprise. To be able to use it, encryption should NOT be enabled and you should first implement your SSLContextFactory class. Its configuration contains the factory class and SSL properties. By default, it is disabled.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "factory-class-name": {
+              "type": "string",
+              "example": "com.hazelcast.nio.ssl.BasicSSLContextFactory"
+            },
+            "properties": {
+              "type": "object"
+            }
+          }
+        },
+        "rest-api": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "endpoint-groups": {
+              "allOf": [
+                {
+                  "type": "object",
+                  "propertyNames": {
+                    "enum": [
+                      "CLUSTER_READ",
+                      "CLUSTER_WRITE",
+                      "HEALTH_CHECK",
+                      "HOT_RESTART",
+                      "WAN",
+                      "DATA",
+                      "CP"
+                    ]
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      }
+                    }
+                  }   
+                },
+                {
+                  "patternProperties": {
+                    "^(CLUSTER_READ|HEALTH_CHECK)$": {
+                      "default": {
+                        "enabled": true
+                      }
+                    }
+                  },
+                  "additionalProperties": {
+                    "default": {
+                      "enabled": false
+                    }
+                  }
+                }
+              ]
+            }
+          }
         }
       }
     },
