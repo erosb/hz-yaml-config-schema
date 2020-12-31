@@ -612,6 +612,23 @@
               "default": 19
             }
           }
+        },
+        "socket-interceptor": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "class-name": {
+              "type": "string"
+            },
+            "properties": {
+              "type": "object"
+            }
+          },
+          "description": "Lets you add custom hooks to join and perform connection procedures (like a custom authentication protocol, etc.). This feature is available only in Hazelcast Enterprise. To be able to use it, you should first implement the MemberSocketInterceptor (for members joining to a cluster) or SocketInterceptor (for clients connecting to a member) class. Its configuration contains the class you implemented and socket interceptor properties. By default, it is disabled."
         }
       }
     },
