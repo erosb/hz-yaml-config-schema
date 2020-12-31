@@ -187,14 +187,14 @@
         "multicast": {
           "type": "object",
           "additionalProperties": false,
-          "description": "Set its \"enabled\" attribute to true for discovery by multicast. It has another attribute (\"loopbackModeEnabled\") which enables or disables the loopback mode in the multicast discovery mechanism. ",
+          "description": "Set its \"enabled\" attribute to true for discovery by multicast. It has another attribute (\"loopback-mode-enabled\") which enables or disables the loopback mode in the multicast discovery mechanism. ",
           "properties": {
             "enabled": {
               "type": "boolean",
               "default": true,
               "description": "Specifies whether multicast discovery is enabled."
             },
-            "loopbackModeEnabled": {
+            "loopback-mode-enabled": {
               "type": "boolean",
               "default": false,
               "description": "Specifies if the loopback mode is enabled for multicast discovery."
@@ -532,7 +532,10 @@
             "properties": {
               "type": "object"
             }
-          }
+          },
+          "required": [
+            "factory-class-name"
+          ]
         },
         "rest-api": {
           "type": "object",
@@ -565,7 +568,7 @@
                         "type": "boolean"
                       }
                     }
-                  }   
+                  }
                 },
                 {
                   "patternProperties": {
@@ -582,6 +585,31 @@
                   }
                 }
               ]
+            }
+          }
+        },
+        "symmetric-encryption": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Lets you encrypt the entire socket level communication among all Hazelcast members. This feature is available only in Hazelcast Enterprise.  Its configuration contains the encryption properties and the same configuration must be placed to all members. By default, it is disabled.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "algorithm": {
+              "type": "string",
+              "default": "PBEWithMD5AndDES"
+            },
+            "password": {
+              "type": "string"
+            },
+            "salt": {
+              "type": "string"
+            },
+            "iteration-count": {
+              "type": "integer",
+              "default": 19
             }
           }
         }
