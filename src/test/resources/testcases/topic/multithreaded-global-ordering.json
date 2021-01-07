@@ -16,7 +16,7 @@
       "pointerToViolation": "#/hazelcast/topic/my-topic",
       "causingExceptions": [],
       "keyword": "not",
-      "message": "subject must not be valid against schema {\"properties\":{\"global-ordering-enabled\":{\"const\":true},\"multi-threading-enabled\":{\"const\":true}}}"
+      "message": "subject must not be valid against schema {\"required\":[\"global-ordering-enabled\",\"multi-threading-enabled\"],\"properties\":{\"global-ordering-enabled\":{\"const\":true},\"multi-threading-enabled\":{\"const\":true}}}"
     }],
     "keyword": "allOf",
     "message": "#: only 1 subschema matches out of 2"

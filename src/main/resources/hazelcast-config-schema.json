@@ -1281,7 +1281,11 @@
             "multi-threading-enabled": {
               "const": true
             }
-          }
+          },
+          "required": [
+            "global-ordering-enabled",
+            "multi-threading-enabled"
+          ]
         }
       }
     },
