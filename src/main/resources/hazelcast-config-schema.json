@@ -769,6 +769,33 @@
     },
     "CardinalityEstimator": {
       "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties":  {
+          "backup-count": {
+            "$ref": "#/definitions/BackupCount"
+          },
+          "async-backup-count": {
+            "$ref": "#/definitions/AsyncBackupCount"
+          },
+          "split-brain-protection-ref":  {
+            "type": "string",
+            "description": " Adds the Split Brain Protection for this data-structure which you configure using the \"split-brain-protection\" element. You should set the \"split-brain-protection-ref\"'s value as the \"split-brain-protection\"'s name."
+          },
+          "merge-policy": {
+            "allOf": [
+              {
+                "$ref": "#/definitions/MergePolicy"
+              },
+              {
+                "default": {
+                  "batch-site": 100,
+                  "class-name": "HyperLogLogMergePolicy"
+                }
+              }
+            ]
+          }
+        }
       }
     },
     "InMemoryFormat": {
