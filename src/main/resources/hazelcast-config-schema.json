@@ -30,7 +30,7 @@
           "type": "object"
         },
         "wan-replication": {
-          "$ref": "#/TODO"
+          "$ref": "#/definitions/WanReplication"
         },
         "network": {
           "$ref": "#/definitions/Network"
@@ -178,7 +178,6 @@
         }
       }
     },
-    "WanReplication": false,
     "NetworkJoin": {
       "type": "object",
       "description": "This configuration lets you choose a discovery mechanism that Hazelcast will use to form a cluster. Hazelcast can find members by multicast, TCP/IP lists and by various discovery mechanisms provided by different cloud APIs.",
@@ -271,59 +270,19 @@
           }
         },
         "aws": {
-          "type": "object",
-          "description": "Please refer to https://github.com/hazelcast/hazelcast-aws/#configuration for the configuration details.",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "default": false,
-              "description": "Specifies whether AWS discovery is enabled or not."
-            }
-          }
+          "$ref": "#/definitions/AwsDiscovery"
         },
         "gcp": {
-          "type": "object",
-          "description": "Please refer to https://github.com/hazelcast/hazelcast-gcp/#configuration for the configuration details.",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "default": false,
-              "description": "Specifies whether Google Cloud Platform discovery is enabled or not."
-            }
-          }
+          "$ref": "#/definitions/GcpDiscovery"
         },
         "azure": {
-          "type": "object",
-          "description": "Please refer to https://github.com/hazelcast/hazelcast-azure/#configuring-at-hazelcast-side for the configuration details.",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "default": false,
-              "description": "Specifies whether Microsoft Azure discovery is enabled or not."
-            }
-          }
+          "$ref": "#/definitions/AzureDiscovery"
         },
         "kubernetes": {
-          "type": "object",
-          "description": "Please refer to https://github.com/hazelcast/hazelcast-kubernetes#hazelcast-configuration for the configuration details.",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "default": false,
-              "description": "Specifies whether Kubernetes discovery is enabled or not."
-            }
-          }
+          "$ref": "#/definitions/KubernetesDiscovery"
         },
         "eureka": {
-          "type": "object",
-          "description": "Please refer to https://github.com/hazelcast/hazelcast-eureka#hazelcast-configuration for the configuration details.",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "default": false,
-              "description": "Specifies whether Eureka Service Registry discovery is enabled or not."
-            }
-          }
+          "$ref": "#/definitions/EurekaDiscovery"
         },
         "discovery-strategies": {
           "type": "object",
@@ -357,6 +316,61 @@
               }
             }
           }
+        }
+      }
+    },
+    "AwsDiscovery": {
+      "type": "object",
+      "description": "Please refer to https://github.com/hazelcast/hazelcast-aws/#configuration for the configuration details.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether AWS discovery is enabled or not."
+        }
+      }
+    },
+    "GcpDiscovery": {
+      "type": "object",
+      "description": "Please refer to https://github.com/hazelcast/hazelcast-gcp/#configuration for the configuration details.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether Google Cloud Platform discovery is enabled or not."
+        }
+      }
+    },
+    "AzureDiscovery": {
+      "type": "object",
+      "description": "Please refer to https://github.com/hazelcast/hazelcast-azure/#configuring-at-hazelcast-side for the configuration details.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether Microsoft Azure discovery is enabled or not."
+        }
+      }
+    },
+    "KubernetesDiscovery": {
+      "type": "object",
+      "description": "Please refer to https://github.com/hazelcast/hazelcast-azure/#configuring-at-hazelcast-side for the configuration details.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether Microsoft Azure discovery is enabled or not."
+        }
+      }
+    },
+    "EurekaDiscovery": {
+      "type": "object",
+      "description": "Please refer to https://github.com/hazelcast/hazelcast-eureka#hazelcast-configuration for the configuration details.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether Eureka Service Registry discovery is enabled or not."
         }
       }
     },
@@ -771,14 +785,14 @@
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
-        "properties":  {
+        "properties": {
           "backup-count": {
             "$ref": "#/definitions/BackupCount"
           },
           "async-backup-count": {
             "$ref": "#/definitions/AsyncBackupCount"
           },
-          "split-brain-protection-ref":  {
+          "split-brain-protection-ref": {
             "type": "string",
             "description": " Adds the Split Brain Protection for this data-structure which you configure using the \"split-brain-protection\" element. You should set the \"split-brain-protection-ref\"'s value as the \"split-brain-protection\"'s name."
           },
@@ -3151,6 +3165,130 @@
               "type": "integer",
               "default": 0,
               "description": "Specifies the TCP linger seconds."
+            }
+          }
+        }
+      }
+    },
+    "WanReplication": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "batch-publisher": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "cluster-name": {
+                  "type": "string",
+                  "description": "Sets the cluster name used as an endpoint cluster name for authentication on the target endpoint. If there is no separate publisher ID property defined, this cluster name will also be used as a WAN publisher ID. This ID is then used for identifying the publisher in a WanReplicationConfig."
+                },
+                "batch-size": {
+                  "type": "integer",
+                  "default": 500,
+                  "description": "Changes the maximum size of events that are sent to the target cluster in a single batch. The batch of events is not sent until this size is reached."
+                },
+                "batch-max-delay-millis": {
+                  "type": "integer",
+                  "default": 1000,
+                  "description": " If the number of events generated does not reach the \"batch-size\", they are sent to the target cluster after a certain amount of time is passed. You can set this time in milliseconds using this element."
+                },
+                "response-timeout-millis": {
+                  "type": "integer",
+                  "default": 60000,
+                  "description": " After a replication event is sent to the target cluster, the source member waits for a confirmation that says the event has reached the target. If confirmation is not received for a period of `response-timeout-millis`, the event is resent to the target cluster."
+                },
+                "acknowledge-type": {
+                  "enum": [
+                    "ACK_ON_RECEIPT",
+                    "ACK_ON_OPERATION_COMPLETE"
+                  ],
+                  "default": "ACK_ON_OPERATION_COMPLETE",
+                  "description": "Acknowledgment type for each target cluster when the events are replicated. You can set it to the following values: \\n * ACK_ON_RECEIPT: Guarantees that events are received by the target cluster. It does not guarantee that the received event is actually applied, but it is faster. \\n * ACK_ON_OPERATION_COMPLETE (default): Guarantees that the event is both received and applied by the target cluster. It is more time consuming, but it is the best way if you have strong consistency requirements."
+                },
+                "initial-publisher-state": {
+                  "enum": ["REPLICATING", "PAUSED", "STOPPED"],
+                  "default": "REPLICATING",
+                  "description": "Defines the initial state in which a WAN publisher is started. \\n * REPLICATING (default): State where both enqueuing new events is allowed, enqueued events are replicated to the target cluster and WAN sync is enabled. \\n * PAUSED: State where new events are enqueued but they not are dequeued. Some events which have been dequeued before the state was switched may still be replicated to the target cluster but further events will not be replicated. WAN sync is enabled. \\n * STOPPED:  State where neither new events are enqueued nor dequeued. As with the PAUSED state, some events might still be replicated after the publisher has switched to this state. WAN sync is enabled."
+                },
+                "snapshot-enabled":  {
+                  "type": "boolean",
+                  "default":  false,
+                  "description": "Sets if key-based coalescing is configured for this WAN publisher. When enabled, only the latest WanReplicationEvent of a key is sent to target."
+                },
+                "idle-max-park-ns": {
+                  "type": "integer",
+                  "default":  250000000,
+                  "description": "Sets the maximum duration in nanoseconds that the WAN replication thread will be parked if there are no events to replicate."
+                },
+                "idle-min-park-ns": {
+                  "type": "integer",
+                  "default": 10000000,
+                  "description": " Sets the minimum duration in nanoseconds that the WAN replication thread will be parked if there are no events to replicate."
+                },
+                "max-concurrent-invocations": {
+                  "type": "integer",
+                  "default": -1,
+                  "description": "Sets the maximum number of WAN event batches being sent to the target cluster concurrently. Setting this property to anything less than 2 will only allow a single batch of events to be sent to each target endpoint and will maintain causality of events for a single partition. Setting this property to 2 or higher will allow multiple batches of WAN events to be sent to each target endpoint. Since this allows reordering or batches due to network conditions, causality and ordering of events for a single partition is lost and batches for a single partition are now sent randomly to any available target endpoint. This, however, does present faster WAN replication for certain scenarios such as replicating immutable, independent map entries which are only added once and where ordering of when these entries are added is not necessary. Keep in mind that if you set this property to a value which is less than the target endpoint count, you will lose performance as not all target endpoints will be used at any point in time to process WAN event batches. So, for instance, if you have a target cluster with 3 members (target endpoints) and you want to use this property, it makes sense to set it to a value higher than 3. Otherwise, you can simply disable it by setting it to less than 2 in which case WAN will use the default replication strategy and adapt to the target endpoint count while maintaining causality."
+                },
+                "discovery-period-seconds": {
+                  "type": "integer",
+                  "default":  10,
+                  "description": " Sets the period in seconds in which WAN tries to discover new target endpoints and reestablish connections to failed endpoints."
+                },
+                "use-endpoint-private-address": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": " Sets whether the WAN connection manager should connect to the endpoint on the private address returned by the discovery SPI. By default this property is false which means the WAN connection manager will always use the public address."
+                },
+                "queue-full-behavior":  {
+                  "enum": ["DISCARD_AFTER_MUTATION", "THROW_EXCEPTION"],
+                  "default":  "DISCARD_AFTER_MUTATION",
+                  "description":  "Policy to be applied when WAN Replication event queues are full. You can set it to the following values: \\n - DISCARD_AFTER_MUTATION (default): The new WAN events generated are dropped and not replicated to the target cluster."
+                },
+                "max-target-endpoints":  {
+                  "type": "integer",
+                  "default": 2147483647,
+                  "description": "The maximum number of endpoints that WAN will connect to when using a discovery mechanism to define endpoints. This property has no effect when static endpoint addresses are defined using target-endpoints."
+                },
+                "queue-capacity": {
+                  "type": "integer",
+                  "default": 10000,
+                  "description": " Size of the queue of events. If you exceed this queue size, then the oldest, not yet replicated updates might get lost. Therefore, if you have a large rate of put/update/remove operations, you should increase queue capacity." 
+                },
+                "target-endpoints":  {
+                  "type": "string",
+                  "description": "Comma separated list of IP addresses of the target cluster members for which the WAN replication is implemented."
+                },
+                "sync": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "consistency-check-strategy": {
+                      "enum": ["NONE", "MERKLE_TREES"],
+                      "description": "Sets the strategy for checking consistency of data between source and target cluster. Any inconsistency will not be reconciled, it will be merely reported via the usual mechanisms (e.g. statistics, diagnostics). The user must initiate WAN sync to reconcile there differences. For the check procedure to work properly, the target cluster should support the chosen strategy."
+                    }
+                  }
+                },
+                "aws":  {
+                  "$ref": "#/definitions/AwsDiscovery"
+                },
+                "gcp": {
+                  "$ref": "#/definitions/GcpDiscovery"
+                },
+                "azure": {
+                  "$ref": "#/definitions/AzureDiscovery"
+                },
+                "kubernetes": {
+                  "$ref": "#/definitions/KubernetesDiscovery"
+                },
+                "eureka":  {
+                  "$ref": "#/definitions/EurekaDiscovery"
+                }
+              }
             }
           }
         }
