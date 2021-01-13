@@ -23,6 +23,22 @@
               "target-endpoints": "10.3.5.1:5701,10.3.5.2:5701",
               "sync": {
                 "consistency-check-strategy": "NONE"
+              },
+              "discovery-strategies": {
+                "node-filter": {
+                  "class": "com.yourpackage.NodeFilter"
+                },
+                "discovery-strategies": [
+                  {
+                    "enabled": true,
+                    "class": "com.hazelcast.jclouds.JCloudsDiscoveryStrategy",
+                    "properties": {
+                      "provider": "google-compute-engine",
+                      "identity": "GCE_IDENTITY",
+                      "credential": "GCE_CREDENTIAL"
+                    }
+                  }
+                ]
               }
             }
           },
