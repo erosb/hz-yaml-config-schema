@@ -37,7 +37,6 @@ public class HzYamlSchemaTest {
     }
 
     @Test
-    @Disabled
     void test() {
         try {
             SCHEMA.validate(readJSONObject("/hazelcast-full-example.json"));

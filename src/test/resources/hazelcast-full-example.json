@@ -1081,7 +1081,7 @@
       "join": {
         "multicast": {
           "enabled": true,
-          "loopbackModeEnabled": true,
+          "loopback-mode-enabled": true,
           "multicast-group": "1.2.3.4",
           "multicast-port": 12345,
           "multicast-timeout-seconds": 5,

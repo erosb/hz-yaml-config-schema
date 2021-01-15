@@ -23,7 +23,7 @@
     "pointerToViolation": "#/hazelcast/network",
     "causingExceptions": [
       {
-        "schemaLocation": "#/definitions/Network/properties/interfaces",
+        "schemaLocation": "#/definitions/Interfaces",
         "pointerToViolation": "#/hazelcast/network/interfaces",
         "causingExceptions": [],
         "keyword": "type",
@@ -44,7 +44,7 @@
         "message": "expected type: JSONObject, found: Boolean"
       },
       {
-        "schemaLocation": "#/definitions/Network/properties/failure-detector",
+        "schemaLocation": "#/definitions/FailureDetector",
         "pointerToViolation": "#/hazelcast/network/failure-detector",
         "causingExceptions": [],
         "keyword": "type",
@@ -58,7 +58,7 @@
         "message": "expected type: JSONObject, found: String"
       },
       {
-        "schemaLocation": "#/definitions/Network/properties/member-address-provider",
+        "schemaLocation": "#/definitions/MemberAddressProvider",
         "pointerToViolation": "#/hazelcast/network/member-address-provider",
         "causingExceptions": [],
         "keyword": "type",
